@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab", "Lab\Lab.vcxproj", "{417966F5-2414-4554-A1EE-5FC0A6430FC2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{76471522-9F9F-46EB-A701-D839431A99BD} = {76471522-9F9F-46EB-A701-D839431A99BD}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Filter2D", "Filter2D\Filter2D.vcxproj", "{76471522-9F9F-46EB-A701-D839431A99BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +20,10 @@ Global
 		{417966F5-2414-4554-A1EE-5FC0A6430FC2}.Debug|x64.Build.0 = Debug|x64
 		{417966F5-2414-4554-A1EE-5FC0A6430FC2}.Release|x64.ActiveCfg = Release|x64
 		{417966F5-2414-4554-A1EE-5FC0A6430FC2}.Release|x64.Build.0 = Release|x64
+		{76471522-9F9F-46EB-A701-D839431A99BD}.Debug|x64.ActiveCfg = Debug|x64
+		{76471522-9F9F-46EB-A701-D839431A99BD}.Debug|x64.Build.0 = Debug|x64
+		{76471522-9F9F-46EB-A701-D839431A99BD}.Release|x64.ActiveCfg = Release|x64
+		{76471522-9F9F-46EB-A701-D839431A99BD}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

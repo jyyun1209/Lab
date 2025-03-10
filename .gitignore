@@ -7,5 +7,7 @@
 
 /Lab/x64/Debug
 /Lab/x64/Release
+/Filter2D/x64/Debug
+/Filter2D/x64/Release
 
 /git token.txt

@@ -3,6 +3,8 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_MainWindow.h"
 
+#include "QtWidgetsFilter2D.h"
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -10,6 +12,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    void InitializeUI();
 
 private:
     Ui::MainWindowClass ui;
