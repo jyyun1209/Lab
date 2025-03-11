@@ -8,7 +8,9 @@ QtWidgetsFilter2D::QtWidgetsFilter2D(QWidget *parent)
 }
 
 QtWidgetsFilter2D::~QtWidgetsFilter2D()
-{}
+{
+
+}
 
 void QtWidgetsFilter2D::InitializeUI()
 {
@@ -17,5 +19,11 @@ void QtWidgetsFilter2D::InitializeUI()
 
 void QtWidgetsFilter2D::SlotButtonImageLoad_Clicked()
 {
-	ui.lineEdit_imagePath->setText(QString("Hi Junyoung"));
+	QString imgName = QFileDialog::getOpenFileName(this, "Select Image", QDir::currentPath(), "Img Files (*.png, *.jpg)");
+	ui.lineEdit_imagePath->setText(imgName);
+
+	QImage qImage = QImage(imgName);
+	ui.label->setPixmap(QPixmap::fromImage(qImage));
+	ui.label->setScaledContents(true);
+	ui.label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
 }

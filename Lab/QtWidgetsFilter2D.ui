@@ -18,20 +18,20 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>81</width>
+     <width>91</width>
      <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string>PushButton</string>
+    <string>Select Image</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lineEdit_imagePath">
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>110</x>
      <y>10</y>
-     <width>991</width>
+     <width>981</width>
      <height>20</height>
     </rect>
    </property>

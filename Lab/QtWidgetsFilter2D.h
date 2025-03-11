@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <QFileDialog>
 #include "ui_QtWidgetsFilter2D.h"
 
 class QtWidgetsFilter2D : public QWidget
