@@ -11,6 +11,11 @@ public:
 	QtWidgetsFilter2D(QWidget *parent = nullptr);
 	~QtWidgetsFilter2D();
 
+	void InitializeUI();
+
+public slots:
+	void SlotButtonImageLoad_Clicked();
+
 private:
 	Ui::QtWidgetsFilter2DClass ui;
 };
