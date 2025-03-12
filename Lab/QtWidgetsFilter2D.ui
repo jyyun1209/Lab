@@ -13,41 +13,52 @@
   <property name="windowTitle">
    <string>QtWidgetsFilter2D</string>
   </property>
-  <widget class="QPushButton" name="pushButton_imagePath">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>91</width>
-     <height>21</height>
+     <width>1091</width>
+     <height>831</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Select Image</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit_imagePath">
-   <property name="geometry">
-    <rect>
-     <x>110</x>
-     <y>10</y>
-     <width>981</width>
-     <height>20</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>40</y>
-     <width>1061</width>
-     <height>781</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="pushButton_imagePath">
+      <property name="text">
+       <string>Select Image</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QGraphicsView" name="graphicsView_image">
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="interactive">
+       <bool>true</bool>
+      </property>
+      <property name="dragMode">
+       <enum>QGraphicsView::ScrollHandDrag</enum>
+      </property>
+      <property name="cacheMode">
+       <set>QGraphicsView::CacheNone</set>
+      </property>
+      <property name="transformationAnchor">
+       <enum>QGraphicsView::AnchorUnderMouse</enum>
+      </property>
+      <property name="resizeAnchor">
+       <enum>QGraphicsView::NoAnchor</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="lineEdit_imagePath"/>
+    </item>
+   </layout>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

@@ -19,4 +19,6 @@ public slots:
 
 private:
 	Ui::QtWidgetsFilter2DClass ui;
+
+	QGraphicsScene* scene = new QGraphicsScene();
 };

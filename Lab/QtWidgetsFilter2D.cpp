@@ -21,9 +21,9 @@ void QtWidgetsFilter2D::SlotButtonImageLoad_Clicked()
 {
 	QString imgName = QFileDialog::getOpenFileName(this, "Select Image", QDir::currentPath(), "Img Files (*.png, *.jpg)");
 	ui.lineEdit_imagePath->setText(imgName);
-
 	QImage qImage = QImage(imgName);
-	ui.label->setPixmap(QPixmap::fromImage(qImage));
-	ui.label->setScaledContents(true);
-	ui.label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+
+	scene->addPixmap(QPixmap::fromImage(qImage));
+	ui.graphicsView_image->setScene(scene);
+	ui.graphicsView_image->show();
 }
