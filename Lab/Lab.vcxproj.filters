@@ -43,6 +43,9 @@
     <ClCompile Include="QtWidgetsFilter2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="QGraphicsView_wheelZoom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QtWidgetsFilter2D.h">
@@ -53,5 +56,10 @@
     <QtUic Include="QtWidgetsFilter2D.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="QGraphicsView_wheelZoom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

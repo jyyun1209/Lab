@@ -31,7 +31,7 @@
      </widget>
     </item>
     <item row="1" column="0" colspan="2">
-     <widget class="QGraphicsView" name="graphicsView_image">
+     <widget class="QGraphicsView_wheelZoom" name="graphicsView_image">
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAlwaysOff</enum>
       </property>
@@ -62,6 +62,13 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QGraphicsView_wheelZoom</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">QGraphicsView_wheelZoom.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
