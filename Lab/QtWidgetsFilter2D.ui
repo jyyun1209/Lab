@@ -13,13 +13,68 @@
   <property name="windowTitle">
    <string>QtWidgetsFilter2D</string>
   </property>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>1091</width>
-     <height>831</height>
+     <x>841</x>
+     <y>12</y>
+     <width>231</width>
+     <height>761</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Filters</string>
+   </property>
+   <widget class="QGroupBox" name="groupBox_median">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>161</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Median</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+    <widget class="QLineEdit" name="lineEdit_medianKernel">
+     <property name="geometry">
+      <rect>
+       <x>72</x>
+       <y>20</y>
+       <width>81</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>56</width>
+       <height>12</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Kernel</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>14</x>
+     <y>13</y>
+     <width>811</width>
+     <height>761</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -29,6 +84,9 @@
        <string>Select Image</string>
       </property>
      </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="lineEdit_imagePath"/>
     </item>
     <item row="1" column="0" colspan="2">
      <widget class="QGraphicsView_wheelZoom" name="graphicsView_image">
@@ -54,9 +112,6 @@
        <enum>QGraphicsView::NoAnchor</enum>
       </property>
      </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLineEdit" name="lineEdit_imagePath"/>
     </item>
    </layout>
   </widget>

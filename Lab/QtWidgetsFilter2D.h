@@ -7,6 +7,9 @@
 #include <QFileDialog>
 #include "ui_QtWidgetsFilter2D.h"
 
+
+#include "../Filter2D/MedianFilter.h"
+
 class QtWidgetsFilter2D : public QWidget
 {
 	Q_OBJECT
@@ -16,11 +19,14 @@ public:
 	~QtWidgetsFilter2D();
 
 	void InitializeUI();
-	QString imgName;
 	QSettings* filter2DSettings;
+
+	QString imgName;
+	int medianKernel;
 
 public slots:
 	void SlotButtonImageLoad_Clicked();
+	void SlotCheckboxMedian_Clicked();
 
 protected:
 	QImage qImage;
