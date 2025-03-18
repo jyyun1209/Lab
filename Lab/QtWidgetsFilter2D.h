@@ -12,17 +12,17 @@ class QtWidgetsFilter2D : public QWidget
 	Q_OBJECT
 
 public:
-	QtWidgetsFilter2D(QWidget *parent = nullptr);
+	QtWidgetsFilter2D(QSettings* settings, QWidget *parent = nullptr);
 	~QtWidgetsFilter2D();
 
 	void InitializeUI();
-	QSettings* settings;
+	QString imgName;
+	QSettings* filter2DSettings;
 
 public slots:
 	void SlotButtonImageLoad_Clicked();
 
 protected:
-	QString imgName;
 	QImage qImage;
 
 private:

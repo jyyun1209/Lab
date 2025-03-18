@@ -14,7 +14,11 @@ public:
     ~MainWindow();
 
     void InitializeUI();
+    QSettings* settings;
 
 private:
     Ui::MainWindowClass ui;
+
+    QTabWidget* tabWidgetMain;
+    QtWidgetsFilter2D* widgetFilter2D;
 };

@@ -10,7 +10,8 @@ void QGraphicsView_wheelZoom::wheelEvent(QWheelEvent* event)
 	setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 	double scaleFactor = 1.15;
 
-	if (event->delta() > 0)
+	//if (event->delta() > 0)			// QT 5.14.0
+	if (event->angleDelta().y() > 0)	// QT 5.15.0
 	{
 		scale(scaleFactor, scaleFactor);
 	}
