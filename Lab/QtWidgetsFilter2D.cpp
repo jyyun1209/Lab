@@ -18,7 +18,7 @@ void QtWidgetsFilter2D::InitializeUI()
 {
 	// Connect Signal <-> Slot
 	connect(ui.pushButton_imagePath, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonImageLoad_Clicked);
-	connect(ui.groupBox_median, &QGroupBox::isChecked, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
+	connect(ui.groupBox_median, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
 
 	// Load Settings
 	imgName = filter2DSettings->value("ImagePath").toString();
@@ -34,7 +34,7 @@ void QtWidgetsFilter2D::InitializeUI()
 
 void QtWidgetsFilter2D::SlotButtonImageLoad_Clicked()
 {
-	imgName = QFileDialog::getOpenFileName(this, "Select Image", QDir::currentPath(), "Img Files (*.png, *.jpg)");
+	imgName = QFileDialog::getOpenFileName(this, "Select Image", QDir::currentPath(), "Img Files (*.png, *.PNG, *.jpg, *.JPG)");
 	ui.lineEdit_imagePath->setText(imgName);
 
 	qImage = QImage(imgName);
@@ -49,6 +49,23 @@ void QtWidgetsFilter2D::SlotButtonImageLoad_Clicked()
 
 void QtWidgetsFilter2D::SlotCheckboxMedian_Clicked()
 {
-	cv::Mat cvImage = cv::imread(imgName.toStdString(), cv::IMREAD_UNCHANGED);
-	MedianFilter(cvImage, cvImage, ui.lineEdit_medianKernel->text().toInt());
+	if (ui.groupBox_median->isChecked())
+	{
+		cv::Mat cvImage = cv::imread(imgName.toStdString(), cv::IMREAD_UNCHANGED);
+		//MedianFilter(cvImage, cvImage, ui.lineEdit_medianKernel->text().toInt());
+		MedianFilter(cvImage, cvImage, 3);
+
+		scene->clear();
+		scene->addPixmap(QPixmap::fromImage(QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.step, QImage::Format_RGB888)));
+		ui.graphicsView_image->setScene(scene);
+		ui.graphicsView_image->show();
+	}
+	else
+	{
+		scene->clear();
+		scene->addPixmap(QPixmap::fromImage(qImage));
+		ui.graphicsView_image->setScene(scene);
+		ui.graphicsView_image->show();
+	}
+	
 }

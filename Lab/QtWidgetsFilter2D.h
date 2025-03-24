@@ -7,8 +7,7 @@
 #include <QFileDialog>
 #include "ui_QtWidgetsFilter2D.h"
 
-
-#include "../Filter2D/MedianFilter.h"
+#include "Filter2D/MedianFilter.h"
 
 class QtWidgetsFilter2D : public QWidget
 {
