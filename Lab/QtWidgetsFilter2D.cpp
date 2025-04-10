@@ -19,6 +19,7 @@ void QtWidgetsFilter2D::InitializeUI()
 	// Connect Signal <-> Slot
 	connect(ui.pushButton_imagePath, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonImageLoad_Clicked);
 	connect(ui.groupBox_median, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
+	connect(ui.lineEdit_medianKernel, &QLineEdit::textChanged, this, &QtWidgetsFilter2D::SlotLineEditMedian_Changed);
 
 	// Load Settings
 	imgName = filter2DSettings->value("ImagePath").toString();
@@ -28,13 +29,13 @@ void QtWidgetsFilter2D::InitializeUI()
 	ui.graphicsView_image->setScene(scene);
 	ui.graphicsView_image->show();
 
-	medianKernel = filter2DSettings->value("MedianKernel").toInt();
+	medianKernel = filter2DSettings->value("Median2DKernel").toInt();
 	ui.lineEdit_medianKernel->setText(QString::number(medianKernel));
 }
 
 void QtWidgetsFilter2D::SlotButtonImageLoad_Clicked()
 {
-	imgName = QFileDialog::getOpenFileName(this, "Select Image", QDir::currentPath(), "Img Files (*.png, *.PNG, *.jpg, *.JPG)");
+	imgName = QFileDialog::getOpenFileName(this, "Select Image", QDir::currentPath(), "All Files (*.*);;Img Files (*.png, *.PNG, *.jpg, *.JPG)");
 	ui.lineEdit_imagePath->setText(imgName);
 
 	qImage = QImage(imgName);
@@ -52,8 +53,8 @@ void QtWidgetsFilter2D::SlotCheckboxMedian_Clicked()
 	if (ui.groupBox_median->isChecked())
 	{
 		cv::Mat cvImage = cv::imread(imgName.toStdString(), cv::IMREAD_UNCHANGED);
-		//MedianFilter(cvImage, cvImage, ui.lineEdit_medianKernel->text().toInt());
-		MedianFilter(cvImage, cvImage, 3);
+		MedianFilter(cvImage, cvImage, ui.lineEdit_medianKernel->text().toInt());
+		cv::cvtColor(cvImage, cvImage, cv::COLOR_BGR2RGB);
 
 		scene->clear();
 		scene->addPixmap(QPixmap::fromImage(QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.step, QImage::Format_RGB888)));
@@ -67,5 +68,11 @@ void QtWidgetsFilter2D::SlotCheckboxMedian_Clicked()
 		ui.graphicsView_image->setScene(scene);
 		ui.graphicsView_image->show();
 	}
-	
+}
+
+void QtWidgetsFilter2D::SlotLineEditMedian_Changed()
+{
+	QtWidgetsFilter2D::SlotCheckboxMedian_Clicked();
+
+	filter2DSettings->setValue("Median2DKernel", ui.lineEdit_medianKernel->text().toInt());
 }

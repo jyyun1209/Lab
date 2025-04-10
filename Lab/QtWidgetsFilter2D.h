@@ -26,6 +26,7 @@ public:
 public slots:
 	void SlotButtonImageLoad_Clicked();
 	void SlotCheckboxMedian_Clicked();
+	void SlotLineEditMedian_Changed();
 
 protected:
 	QImage qImage;
