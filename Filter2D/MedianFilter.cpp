@@ -1,24 +1,44 @@
 #include "MedianFilter.h"
 
-bool MedianFilter(cv::Mat _src, cv::Mat _dst, int _k)
+
+int BorderReplicate_JY(int _p, int _len)
 {
-	if (_k == 0)
+	if (_p < 0)
 	{
-		return true;
+		return 0;
+	}
+	else if (_p >= _len)
+	{
+		return _len - 1;
 	}
 	else
 	{
-		cv::medianBlur(_src, _dst, _k);
+		return _p;
 	}
-
-	return true;
 }
 
-#if 0
+float BorderInterpolate_JY(cv::Mat _src, int _row, int _col, MODE_BORDER _mode)
+{
+	int r, c;
+
+	switch (_mode)
+	{
+	case MODE_BORDER::REPLICATE_CPP:
+		r = BorderReplicate_JY(_row, _src.rows);
+		c = BorderReplicate_JY(_col, _src.cols);
+	}
+	return _src.at<float>(r, c);
+}
+
 bool MedianFilter2D(cv::Mat _src, cv::Mat& _dst, int _kx, int _ky, MODE_MEDIAN2D _mode)
 {
-	TIMER();
-	TIMER_CUDA();
+	//TIMER();
+	//TIMER_CUDA();
+
+	if (_kx == 0)
+	{
+		return 0;
+	}
 
 	if (_ky == -1)
 	{
@@ -27,48 +47,48 @@ bool MedianFilter2D(cv::Mat _src, cv::Mat& _dst, int _kx, int _ky, MODE_MEDIAN2D
 
 	switch (_mode)
 	{
-	case MODE_MEDIAN2D_OPENCV:
+	case MODE_MEDIAN2D::OPENCV:
 	{
 		cv::medianBlur(_src, _dst, _kx);
 		return true;
 	}
-	case MODE_MEDIAN2D_OPENCV_UMAT:
-	{
-		cv::UMat src_umat, dst_umat;
-		_src.copyTo(src_umat);
-		cv::medianBlur(src_umat, dst_umat, _kx);
-		dst_umat.copyTo(_dst);
-		return true;
-	}
-	case MODE_MEDIAN2D_OPENCV_CUDA:
-	{
-		// Src type: CV_8UC1만 지원
-		cv::cuda::GpuMat src_gpu, dst_gpu;
-		src_gpu.upload(_src);
-		cv::Ptr<cv::cuda::Filter> median = cv::cuda::createMedianFilter(src_gpu.type(), _kx);
-		median->apply(src_gpu, dst_gpu);
-		return true;
-	}
-	case MODE_MEDIAN2D_CUSTOM_CPP:
+	//case MODE_MEDIAN2D_OPENCV_UMAT:
+	//{
+	//	cv::UMat src_umat, dst_umat;
+	//	_src.copyTo(src_umat);
+	//	cv::medianBlur(src_umat, dst_umat, _kx);
+	//	dst_umat.copyTo(_dst);
+	//	return true;
+	//}
+	//case MODE_MEDIAN2D_OPENCV_CUDA:
+	//{
+	//	// Src type: CV_8UC1만 지원
+	//	cv::cuda::GpuMat src_gpu, dst_gpu;
+	//	src_gpu.upload(_src);
+	//	cv::Ptr<cv::cuda::Filter> median = cv::cuda::createMedianFilter(src_gpu.type(), _kx);
+	//	median->apply(src_gpu, dst_gpu);
+	//	return true;
+	//}
+	case MODE_MEDIAN2D::CUSTOM_CPP:
 	{
 		MedianFilter2D_CPP(_src, _dst, _kx, _ky);
 		return true;
 	}
-	case MODE_MEDIAN2D_CUSTOM_CUDA:
-	{
-		cuMedianBlur(_src, _dst, _kx, _ky);
-		return true;
-	}
-	case MODE_MEDIAN2D_CUSTOM_CPP_FINITE_ONLY:
-	{
-		MedianFilter2D_CPP(_src, _dst, _kx, _ky, true);
-		return true;
-	}
-	case MODE_MEDIAN2D_CUSTOM_CUDA_FINITE_ONLY:
-	{
-		cuMedianBlur(_src, _dst, _kx, _ky, CUDA_BORDER_REPLICATE, true);
-		return true;
-	}
+	//case MODE_MEDIAN2D_CUSTOM_CUDA:
+	//{
+	//	cuMedianBlur(_src, _dst, _kx, _ky);
+	//	return true;
+	//}
+	//case MODE_MEDIAN2D_CUSTOM_CPP_FINITE_ONLY:
+	//{
+	//	MedianFilter2D_CPP(_src, _dst, _kx, _ky, true);
+	//	return true;
+	//}
+	//case MODE_MEDIAN2D_CUSTOM_CUDA_FINITE_ONLY:
+	//{
+	//	cuMedianBlur(_src, _dst, _kx, _ky, CUDA_BORDER_REPLICATE, true);
+	//	return true;
+	//}
 	default:
 		return false;
 	}
@@ -98,7 +118,7 @@ bool MedianFilter2D_CPP(cv::Mat _src, cv::Mat& _dst, int _kx, int _ky, bool _fin
 					}
 					else
 					{
-						curr_val = borderInterpolate_LP(_src, row + i, col + j, BORDER_REPLICATE_CPP);
+						curr_val = BorderInterpolate_JY(_src, row + i, col + j, MODE_BORDER::REPLICATE_CPP);
 					}
 					if (_finiteOnly)
 					{
@@ -135,7 +155,6 @@ bool MedianFilter2D_CPP(cv::Mat _src, cv::Mat& _dst, int _kx, int _ky, bool _fin
 	temp.copyTo(_dst);
 	return true;
 }
-#endif
 
 #if 0
 bool TransformedDomainBoxFilter_Horizontal(cv::Mat src, cv::Mat dst, cv::Mat ct, double box_radius)

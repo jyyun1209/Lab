@@ -53,7 +53,7 @@ void QtWidgetsFilter2D::SlotCheckboxMedian_Clicked()
 	if (ui.groupBox_median->isChecked())
 	{
 		cv::Mat cvImage = cv::imread(imgName.toStdString(), cv::IMREAD_UNCHANGED);
-		MedianFilter(cvImage, cvImage, ui.lineEdit_medianKernel->text().toInt());
+		MedianFilter2D(cvImage, cvImage, ui.lineEdit_medianKernel->text().toInt(), ui.lineEdit_medianKernel->text().toInt(), MODE_MEDIAN2D::OPENCV);
 		cv::cvtColor(cvImage, cvImage, cv::COLOR_BGR2RGB);
 
 		scene->clear();
