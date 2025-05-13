@@ -19,9 +19,11 @@ void QtWidgetsFilter2D::InitializeUI()
 	// Connect Signal <-> Slot
 	connect(ui.pushButton_imagePath, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonImageLoad_Clicked);
 	connect(ui.groupBox_median, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
-	connect(ui.lineEdit_medianKernel, &QLineEdit::textChanged, this, &QtWidgetsFilter2D::SlotLineEditMedian_Changed);
+	connect(ui.lineEdit_medianKernel, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditMedian_Changed);
 	connect(ui.groupBox_SEP, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked);
-	connect(ui.lineEdit_sepKernel, &QLineEdit::textChanged, this, &QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed);
+	connect(ui.lineEdit_sepSigmaS, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed);
+	connect(ui.lineEdit_sepSigmaR, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed);
+	connect(ui.lineEdit_sepIterations, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed);
 	connect(ui.pushButton_save, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonSave_Clicked);
 
 	// Load Settings
@@ -35,8 +37,9 @@ void QtWidgetsFilter2D::InitializeUI()
 	int medianKernel = filter2DSettings->value("Median2DKernel").toInt();
 	ui.lineEdit_medianKernel->setText(QString::number(medianKernel));
 
-	int sepKernel = filter2DSettings->value("SEPKernel").toInt();
-	ui.lineEdit_sepKernel->setText(QString::number(sepKernel));
+	int sepSigmaS = filter2DSettings->value("SEPSigmaS").toInt();
+	float sepSigmaR = filter2DSettings->value("SEPSigmaR").toFloat();
+	int sepIterations = filter2DSettings->value("SEPIterations").toInt();
 }
 
 void QtWidgetsFilter2D::SlotButtonImageLoad_Clicked()
@@ -97,7 +100,7 @@ void QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked()
 		//cv::Mat cvImage = cv::imread(imgName.toStdString(), cv::IMREAD_UNCHANGED);
 		cvImage = cv::imread(imgName.toStdString(), cv::IMREAD_GRAYSCALE);
 		cvImage.convertTo(cvImage, CV_32F);
-		SpatialEdgePreservingFilter(cvImage, cvImage, 3, 0.1, ui.lineEdit_sepKernel->text().toInt());
+		SpatialEdgePreservingFilter(cvImage, cvImage, ui.lineEdit_sepSigmaS->text().toInt(), ui.lineEdit_sepSigmaR->text().toFloat(), ui.lineEdit_sepIterations->text().toInt());
 		cvImage.convertTo(cvImage, CV_8UC1);
 		//cv::cvtColor(cvImage, cvImage, cv::COLOR_BGR2RGB);
 
@@ -119,7 +122,9 @@ void QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked()
 void QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed()
 {
 	QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked();
-	filter2DSettings->setValue("SEPKernel", ui.lineEdit_sepKernel->text().toInt());
+	filter2DSettings->setValue("SEPSigmaS", ui.lineEdit_sepSigmaS->text().toInt());
+	filter2DSettings->setValue("SEPSigmaR", ui.lineEdit_sepSigmaR->text().toFloat());
+	filter2DSettings->setValue("SEPIterations", ui.lineEdit_sepIterations->text().toInt());
 }
 
 
