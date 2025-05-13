@@ -7,7 +7,9 @@
 #include <QFileDialog>
 #include "ui_QtWidgetsFilter2D.h"
 
+#include "Common/File.h"
 #include "Filter2D/MedianFilter.h"
+#include "Filter2D/SpatialEdgePreserving.h"
 
 class QtWidgetsFilter2D : public QWidget
 {
@@ -21,15 +23,25 @@ public:
 	QSettings* filter2DSettings;
 
 	QString imgName;
-	int medianKernel;
 
 public slots:
+	// Load Image
 	void SlotButtonImageLoad_Clicked();
+
+	// Median Filter
 	void SlotCheckboxMedian_Clicked();
 	void SlotLineEditMedian_Changed();
 
+	// Spatial Edge Preserving
+	void SlotCheckboxSpatialEdgePreserving_Clicked();
+	void SlotLineEditSpatialEdgePreserving_Changed();
+
+	// Save Image
+	void SlotButtonSave_Clicked();
+
 protected:
 	QImage qImage;
+	cv::Mat cvImage;
 
 private:
 	Ui::QtWidgetsFilter2DClass ui;

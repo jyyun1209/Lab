@@ -21,13 +21,13 @@
     <ClInclude Include="pch.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="MedianFilter.h">
+    <ClInclude Include="Timer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="SpatialEdgePreserving.h">
+    <ClInclude Include="File.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Filter2D_Exp.h">
+    <ClInclude Include="Common_Exp.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,10 +38,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="MedianFilter.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="SpatialEdgePreserving.cpp">
+    <ClCompile Include="File.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

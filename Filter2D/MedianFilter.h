@@ -1,8 +1,9 @@
 #pragma once
 
 #include <opencv2/opencv.hpp>
+#include "Filter2D_Exp.h"
+#include "Common/Timer.h"
 
-#define FILTER2D_DLL __declspec(dllexport)
 
 enum class MODE_MEDIAN2D
 {
