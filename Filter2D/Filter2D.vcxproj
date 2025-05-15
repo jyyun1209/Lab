@@ -24,6 +24,7 @@
     <ProjectGuid>{76471522-9f9f-46eb-a701-d839431a99bd}</ProjectGuid>
     <RootNamespace>Filter2D</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <CudaToolkitCustomDir>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.5</CudaToolkitCustomDir>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -54,6 +55,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 12.5.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -140,7 +142,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
@@ -170,7 +172,15 @@
     </ClCompile>
     <ClCompile Include="SpatialEdgePreserving.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="cuda_common.cuh" />
+    <CudaCompile Include="cuMedianFilter.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
+    <CudaCompile Include="cuMedianFilter.cuh" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 12.5.targets" />
   </ImportGroup>
 </Project>

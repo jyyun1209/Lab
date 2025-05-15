@@ -95,11 +95,11 @@ bool MedianFilter2D(cv::Mat _src, cv::Mat& _dst, int _kx, int _ky, MODE_MEDIAN2D
 		}
 		return true;
 	}
-	//case MODE_MEDIAN2D_CUSTOM_CUDA:
-	//{
-	//	cuMedianBlur(_src, _dst, _kx, _ky);
-	//	return true;
-	//}
+	case MODE_MEDIAN2D::CUSTOM_CUDA:
+	{
+		cuMedianBlur(_src, _dst, _kx, _ky);
+		return true;
+	}
 	//case MODE_MEDIAN2D_CUSTOM_CPP_FINITE_ONLY:
 	//{
 	//	MedianFilter2D_CPP(_src, _dst, _kx, _ky, true);

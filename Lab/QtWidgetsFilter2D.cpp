@@ -91,8 +91,8 @@ void QtWidgetsFilter2D::SlotCheckboxMedian_Clicked()
 {
 	if (ui.groupBox_median->isChecked())
 	{
-		cv::Mat cvImageFiltered;
-		MedianFilter2D(cvImage, cvImageFiltered, ui.lineEdit_medianKernel->text().toInt(), ui.lineEdit_medianKernel->text().toInt(), MODE_MEDIAN2D::CUSTOM_CPP);
+		cv::Mat cvImageFiltered = cvImage.clone();
+		MedianFilter2D(cvImage, cvImageFiltered, ui.lineEdit_medianKernel->text().toInt(), ui.lineEdit_medianKernel->text().toInt(), MODE_MEDIAN2D::CUSTOM_CUDA);
 		UpdateImageFromCV(cvImageFiltered, scene);
 	}
 	else
@@ -113,7 +113,7 @@ void QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked()
 {
 	if (ui.groupBox_SEP->isChecked())
 	{
-		cv::Mat cvImageFiltered;
+		cv::Mat cvImageFiltered = cvImage.clone();
 		SpatialEdgePreservingFilter(cvImage, cvImageFiltered, ui.lineEdit_sepSigmaS->text().toInt(), ui.lineEdit_sepSigmaR->text().toFloat(), ui.lineEdit_sepIterations->text().toInt());
 		UpdateImageFromCV(cvImage, scene);
 	}

@@ -1,4 +1,4 @@
-#include "TkFilterCuda.cuh"
+#include "cuMedianFilter.cuh"
 
 /* Insertion sort */
 __device__ void d_insertionSort(float* arr, int size)
@@ -106,58 +106,10 @@ __global__ void d_medianBlur(float* d_inputImage, float* d_outputImage, int widt
 	}
 }
 
-__global__ void d_rtDPC(float* d_inputImage, float* d_outputImage, int width, int height, int kernel_x, int kernel_y, float threshold, int borderType)
-{
-	int x = blockIdx.x * blockDim.x + threadIdx.x;	// Width
-	int y = blockIdx.y * blockDim.y + threadIdx.y;	// Height
-	
-	float curr_int = d_inputImage[y * width + x];
-	float avg_int = 0;
-	if (x < width && y < height)
-	{
-		int kw05 = kernel_x >> 1;
-		int kh05 = kernel_y >> 1;
-		int cnt = 0;
-		float kernel[64] = { 0 };	// CHK: Dynamic memory allocation 도입 필요
-		//float* kernel = new float[kernel_x * kernel_y];	// 이렇게 하면 에러 발생도 없이 프로그램 종료
-
-		for (int j = -kh05; j <= kh05; j++)
-		{
-			for (int i = -kw05; i <= kw05; i++)
-			{
-				if (i == 0 && j == 0)
-				{
-					continue;
-				}
-
-				if (x - kw05 >= 0 && y - kh05 >= 0 && x + kw05 < width && y + kh05 < height)
-				{
-					avg_int += d_inputImage[(y + j) * width + (x + i)];
-				}
-				else
-				{
-					avg_int += d_borderInterpolate(d_inputImage, x + i, y + j, width, height, borderType); // CHK: Border Type 다양화 필요
-				}
-				cnt++;
-			}
-		}
-
-		avg_int /= cnt;
-
-		float diff = abs(avg_int - curr_int);
-		if (diff > threshold)
-		{
-			d_outputImage[width * y + x] = avg_int;
-		}
-		else
-		{
-			d_outputImage[width * y + x] = curr_int;
-		}
-	}
-}
-
 void cuMedianBlur(cv::Mat h_inputImage, cv::Mat& h_outputImage, int kernel_x, int kernel_y, int borderType, bool finiteOnly)
 {
+	//TIMER_CUDA();
+
 	float* d_inputImage, * d_outputImage;
 	int size = h_inputImage.rows * h_inputImage.cols * sizeof(float);
 
@@ -172,45 +124,15 @@ void cuMedianBlur(cv::Mat h_inputImage, cv::Mat& h_outputImage, int kernel_x, in
 	CUDA_CHECK(cudaMemcpyAsync(d_inputImage, (float*)h_inputImage.data, size, cudaMemcpyHostToDevice, stream));
 
 	/* Run Kernel Function */
-	dim3 dimBlock(32, 32);	// (width, height) (블록 당 최대 쓰레드 수: 1024)
+	dim3 dimBlock(8, 8);	// (width, height) (블록 당 최대 쓰레드 수: 1024)
 	dim3 dimGrid(ceil(h_inputImage.cols / (double)dimBlock.x), ceil(h_inputImage.rows / (double)dimBlock.y));	// (width, height)
 	d_medianBlur <<< dimGrid, dimBlock, 0, stream >>> (d_inputImage, d_outputImage, h_inputImage.cols, h_inputImage.rows, kernel_x, kernel_y, borderType, finiteOnly);
 
 	/* Memory Copy (Device to Host) */
 	CUDA_CHECK(cudaMemcpyAsync((float*)h_outputImage.data, d_outputImage, size, cudaMemcpyDeviceToHost, stream));
-	
+
 	/* Memory Deallocation */
 	CUDA_CHECK(cudaStreamDestroy(stream));
-	CUDA_CHECK(cudaFree(d_inputImage));
-	CUDA_CHECK(cudaFree(d_outputImage));
-}
-
-void cuRTDPC(cv::Mat h_inputImage, cv::Mat& h_outputImage, int kernel_x, int kernel_y, float threshold, int borderType)
-{
-	float* d_inputImage, * d_outputImage;
-	int size = h_inputImage.rows * h_inputImage.cols * sizeof(float);
-
-	/* Memory Allocation */
-	CUDA_CHECK(cudaMalloc(&d_inputImage, size));
-	CUDA_CHECK(cudaMalloc(&d_outputImage, size));
-
-	/* Memory Copy (Host to Device) */
-	CUDA_CHECK(cudaMemcpy(d_inputImage, (float*)h_inputImage.data, size, cudaMemcpyHostToDevice));
-
-	/* Run Kernel Function */
-	dim3 dimBlock(32, 32);	// (width, height)
-	dim3 dimGrid(ceil(h_inputImage.cols / (double)dimBlock.x), ceil(h_inputImage.rows / (double)dimBlock.y));	// (width, height)
-	cv::TickMeter tm;
-	tm.start();
-	d_rtDPC << < dimGrid, dimBlock >> > (d_inputImage, d_outputImage, h_inputImage.cols, h_inputImage.rows, kernel_x, kernel_y, threshold, borderType);
-	tm.stop();
-	std::cout << "Elapsed time: " << tm.getTimeMilli() << " ms" << std::endl;
-	cudaDeviceSynchronize();
-
-	/* Memory Copy (Device to Host) */
-	CUDA_CHECK(cudaMemcpy((float*)h_outputImage.data, d_outputImage, size, cudaMemcpyDeviceToHost));
-
-	/* Memory Deallocation */
 	CUDA_CHECK(cudaFree(d_inputImage));
 	CUDA_CHECK(cudaFree(d_outputImage));
 }
