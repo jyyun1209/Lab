@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)\Build\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)\;$(SolutionDir)\3rdParty\OpenCV\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)\3rdParty\OpenCV\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\3rdParty\OpenCV\lib\v143;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

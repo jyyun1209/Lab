@@ -22,7 +22,17 @@ void Convert32FTo16U(const cv::Mat& _depth32, cv::Mat& _depth16, const float& _d
 	}
 }
 
-void saveImage(cv::Mat image, std::string saveLocation, float scale)
+void LoadImageToCV(cv::Mat& _image, std::string _path)
+{
+	_image = cv::imread(_path, cv::IMREAD_UNCHANGED);
+
+	if (_image.empty())
+	{
+		throw std::invalid_argument("Empty Image");
+	}
+}
+
+void SaveImage(cv::Mat image, std::string saveLocation, std::string _ext)
 {
 	/*********************************************************************************
 	* OpenCV Mat 타입 데이터를 받아서 Image 파일로 저장
@@ -36,16 +46,33 @@ void saveImage(cv::Mat image, std::string saveLocation, float scale)
 		throw std::invalid_argument("Empty Image");
 	}
 
-	if (image.type() == CV_8U || image.type() == CV_8UC3 || image.type() == CV_16U)
+	if (_ext != ".png" && _ext != ".jpg" && _ext != ".jpeg" && _ext != ".tif" && _ext != ".tiff")
 	{
-		image.convertTo(image, image.type(), scale, 0);
-		cv::imwrite(saveLocation, image);
+		throw std::invalid_argument("Invalid Image Extension (Only .png, .jpg, .jpeg .tif .tiff are supported)");
 	}
-	else if (image.type() == CV_32F)
+
+	std::time_t now = std::time(nullptr);
+	std::tm* t = std::localtime(&now);
+	std::ostringstream oss;
+	oss << std::put_time(t, "%Y_%m_%d_%H%M%S");
+	std::string curr_time = oss.str();
+
+	if (image.type() == CV_8UC1 || image.type() == CV_8UC3 || image.type() == CV_16UC1)
 	{
-		cv::Mat image16U = cv::Mat(image.size(), CV_16U);
-		Convert32FTo16U(image, image16U, scale, 0);
-		cv::imwrite(saveLocation, image16U);
+		cv::imwrite(saveLocation + "\\" + curr_time + _ext, image);
+	}
+	else if (image.type() == CV_32FC1)
+	{
+		if (_ext == ".tif" || _ext == ".tiff")
+		{
+			cv::imwrite(saveLocation + "\\" + curr_time + _ext, image);
+		}
+		else
+		{
+			cv::Mat image16U = cv::Mat(image.size(), CV_16U);
+			Convert32FTo16U(image, image16U);
+			cv::imwrite(saveLocation + "\\" + curr_time + _ext, image16U);
+		}
 	}
 	else
 	{

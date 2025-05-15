@@ -14,6 +14,31 @@ QtWidgetsFilter2D::~QtWidgetsFilter2D()
 	
 }
 
+void QtWidgetsFilter2D::UpdateImageFromCV(cv::Mat _image, QGraphicsScene* _scene)
+{
+	QImage qImage;
+	if (_image.type() == CV_8UC1)
+	{
+		qImage = QImage(_image.data, _image.cols, _image.rows, _image.step, QImage::Format_Grayscale8);
+	}
+	else if (_image.type() == CV_8UC3)
+	{
+		qImage = QImage(_image.data, _image.cols, _image.rows, _image.step, QImage::Format_BGR888);
+	}
+	else if (_image.type() == CV_32FC1)
+	{
+		cv::Mat mask;
+		cv::compare(_image, -INFINITY, mask, cv::CMP_NE);
+		cv::normalize(_image, _image, 0, UINT16_MAX, cv::NORM_MINMAX, CV_16UC1, mask);
+		qImage = QImage(_image.data, _image.cols, _image.rows, _image.step, QImage::Format_Grayscale16);
+	}
+
+	scene->clear();
+	scene->addPixmap(QPixmap::fromImage(qImage));
+	ui.graphicsView_image->setScene(scene);
+	ui.graphicsView_image->show();
+}
+
 void QtWidgetsFilter2D::InitializeUI()
 {
 	// Connect Signal <-> Slot
@@ -29,17 +54,24 @@ void QtWidgetsFilter2D::InitializeUI()
 	// Load Settings
 	imgName = filter2DSettings->value("ImagePath").toString();
 	ui.lineEdit_imagePath->setText(imgName);
-	qImage = QImage(imgName);
-	scene->addPixmap(QPixmap::fromImage(qImage));
-	ui.graphicsView_image->setScene(scene);
-	ui.graphicsView_image->show();
+
+	LoadImageToCV(cvImage, imgName.toStdString());
+	UpdateImageFromCV(cvImage, scene);
 
 	int medianKernel = filter2DSettings->value("Median2DKernel").toInt();
 	ui.lineEdit_medianKernel->setText(QString::number(medianKernel));
 
 	int sepSigmaS = filter2DSettings->value("SEPSigmaS").toInt();
+	ui.lineEdit_sepSigmaS->setText(QString::number(sepSigmaS));
+
 	float sepSigmaR = filter2DSettings->value("SEPSigmaR").toFloat();
+	ui.lineEdit_sepSigmaR->setText(QString::number(sepSigmaR));
+
 	int sepIterations = filter2DSettings->value("SEPIterations").toInt();
+	ui.lineEdit_sepIterations->setText(QString::number(sepIterations));
+
+	int saveExt = filter2DSettings->value("SaveExt").toInt();
+	ui.comboBox_extension->setCurrentIndex(saveExt);
 }
 
 void QtWidgetsFilter2D::SlotButtonImageLoad_Clicked()
@@ -47,12 +79,8 @@ void QtWidgetsFilter2D::SlotButtonImageLoad_Clicked()
 	imgName = QFileDialog::getOpenFileName(this, "Select Image", QDir::currentPath(), "All Files (*.*);;Img Files (*.png, *.PNG, *.jpg, *.JPG)");
 	ui.lineEdit_imagePath->setText(imgName);
 
-	qImage = QImage(imgName);
-
-	scene->clear();
-	scene->addPixmap(QPixmap::fromImage(qImage));
-	ui.graphicsView_image->setScene(scene);
-	ui.graphicsView_image->show();
+	LoadImageToCV(cvImage, imgName.toStdString());
+	UpdateImageFromCV(cvImage, scene);
 
 	filter2DSettings->setValue("ImagePath", imgName);
 }
@@ -70,18 +98,11 @@ void QtWidgetsFilter2D::SlotCheckboxMedian_Clicked()
 		cvImage.convertTo(cvImage, CV_8UC1);
 		//cv::cvtColor(cvImage, cvImage, cv::COLOR_BGR2RGB);
 
-		scene->clear();
-		//scene->addPixmap(QPixmap::fromImage(QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.step, QImage::Format_RGB888)));
-		scene->addPixmap(QPixmap::fromImage(QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.step, QImage::Format_Grayscale8)));
-		ui.graphicsView_image->setScene(scene);
-		ui.graphicsView_image->show();
+		UpdateImageFromCV(cvImage, scene);
 	}
 	else
 	{
-		scene->clear();
-		scene->addPixmap(QPixmap::fromImage(qImage));
-		ui.graphicsView_image->setScene(scene);
-		ui.graphicsView_image->show();
+		UpdateImageFromCV(cvImage, scene);
 	}
 }
 
@@ -104,18 +125,11 @@ void QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked()
 		cvImage.convertTo(cvImage, CV_8UC1);
 		//cv::cvtColor(cvImage, cvImage, cv::COLOR_BGR2RGB);
 
-		scene->clear();
-		//scene->addPixmap(QPixmap::fromImage(QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.step, QImage::Format_RGB888)));
-		scene->addPixmap(QPixmap::fromImage(QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.step, QImage::Format_Grayscale8)));
-		ui.graphicsView_image->setScene(scene);
-		ui.graphicsView_image->show();
+		UpdateImageFromCV(cvImage, scene);
 	}
 	else
 	{
-		scene->clear();
-		scene->addPixmap(QPixmap::fromImage(qImage));
-		ui.graphicsView_image->setScene(scene);
-		ui.graphicsView_image->show();
+		UpdateImageFromCV(cvImage, scene);
 	}
 }
 
@@ -131,5 +145,6 @@ void QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed()
 // Save Image
 void QtWidgetsFilter2D::SlotButtonSave_Clicked()
 {
-	saveImage(cvImage, "Output.png");
+	filter2DSettings->setValue("SaveExt", ui.comboBox_extension->currentIndex());
+	SaveImage(cvImage, ".", ui.comboBox_extension->currentText().toStdString());
 }

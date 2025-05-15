@@ -40,8 +40,8 @@ public slots:
 	void SlotButtonSave_Clicked();
 
 protected:
-	QImage qImage;
 	cv::Mat cvImage;
+	void UpdateImageFromCV(cv::Mat _image, QGraphicsScene* _scene);
 
 private:
 	Ui::QtWidgetsFilter2DClass ui;
