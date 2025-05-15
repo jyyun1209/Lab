@@ -91,14 +91,9 @@ void QtWidgetsFilter2D::SlotCheckboxMedian_Clicked()
 {
 	if (ui.groupBox_median->isChecked())
 	{
-		//cv::Mat cvImage = cv::imread(imgName.toStdString(), cv::IMREAD_UNCHANGED);
-		cvImage = cv::imread(imgName.toStdString(), cv::IMREAD_GRAYSCALE);
-		cvImage.convertTo(cvImage, CV_32F);
-		MedianFilter2D(cvImage, cvImage, ui.lineEdit_medianKernel->text().toInt(), ui.lineEdit_medianKernel->text().toInt(), MODE_MEDIAN2D::CUSTOM_CPP);
-		cvImage.convertTo(cvImage, CV_8UC1);
-		//cv::cvtColor(cvImage, cvImage, cv::COLOR_BGR2RGB);
-
-		UpdateImageFromCV(cvImage, scene);
+		cv::Mat cvImageFiltered;
+		MedianFilter2D(cvImage, cvImageFiltered, ui.lineEdit_medianKernel->text().toInt(), ui.lineEdit_medianKernel->text().toInt(), MODE_MEDIAN2D::CUSTOM_CPP);
+		UpdateImageFromCV(cvImageFiltered, scene);
 	}
 	else
 	{
@@ -118,13 +113,8 @@ void QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked()
 {
 	if (ui.groupBox_SEP->isChecked())
 	{
-		//cv::Mat cvImage = cv::imread(imgName.toStdString(), cv::IMREAD_UNCHANGED);
-		cvImage = cv::imread(imgName.toStdString(), cv::IMREAD_GRAYSCALE);
-		cvImage.convertTo(cvImage, CV_32F);
-		SpatialEdgePreservingFilter(cvImage, cvImage, ui.lineEdit_sepSigmaS->text().toInt(), ui.lineEdit_sepSigmaR->text().toFloat(), ui.lineEdit_sepIterations->text().toInt());
-		cvImage.convertTo(cvImage, CV_8UC1);
-		//cv::cvtColor(cvImage, cvImage, cv::COLOR_BGR2RGB);
-
+		cv::Mat cvImageFiltered;
+		SpatialEdgePreservingFilter(cvImage, cvImageFiltered, ui.lineEdit_sepSigmaS->text().toInt(), ui.lineEdit_sepSigmaR->text().toFloat(), ui.lineEdit_sepIterations->text().toInt());
 		UpdateImageFromCV(cvImage, scene);
 	}
 	else

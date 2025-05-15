@@ -85,7 +85,7 @@ bool MedianFilter2D(cv::Mat _src, cv::Mat& _dst, int _kx, int _ky, MODE_MEDIAN2D
 	//}
 	case MODE_MEDIAN2D::CUSTOM_CPP:
 	{
-		if (_src.type() == CV_8UC3)
+		if (_src.type() == CV_8UC3 || _src.type() == CV_8UC1)
 		{
 			MedianFilter2D_CPP<uchar>(_src, _dst, _kx, _ky);
 		}
@@ -123,7 +123,7 @@ bool MedianFilter2D_CPP(cv::Mat _src, cv::Mat& _dst, int _kx, int _ky, bool _fin
 	cv::Mat temp = cv::Mat::zeros(_src.rows, _src.cols, _src.type());
 	_src.copyTo(temp);
 
-	//#pragma	omp parallel for collapse(2)
+	#pragma	omp parallel for collapse (3)
 	for (int ch = 0; ch < _src.channels(); ch++)
 	{
 		for (int row = 0; row < _src.rows; row++)
@@ -148,7 +148,7 @@ bool MedianFilter2D_CPP(cv::Mat _src, cv::Mat& _dst, int _kx, int _ky, bool _fin
 							}
 							else
 							{
-								return false;
+								// Do nothing
 							}
 						}
 						else
@@ -189,7 +189,7 @@ bool MedianFilter2D_CPP(cv::Mat _src, cv::Mat& _dst, int _kx, int _ky, bool _fin
 					}
 					else
 					{
-						return false;
+						// Do nothing
 					}
 				}
 				else
@@ -204,7 +204,7 @@ bool MedianFilter2D_CPP(cv::Mat _src, cv::Mat& _dst, int _kx, int _ky, bool _fin
 					}
 					else
 					{
-						return false;
+						// Do nothing
 					}
 				}
 			}
