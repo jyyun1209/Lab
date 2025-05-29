@@ -29,6 +29,9 @@
     <ClInclude Include="Filter2D_Exp.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="cuSpatialEdgePreserving.cuh">
+      <Filter>CUDA</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -52,6 +55,9 @@
       <Filter>CUDA</Filter>
     </CudaCompile>
     <CudaCompile Include="cuMedianFilter.cuh">
+      <Filter>CUDA</Filter>
+    </CudaCompile>
+    <CudaCompile Include="cuSpatialEdgePreserving.cu">
       <Filter>CUDA</Filter>
     </CudaCompile>
   </ItemGroup>

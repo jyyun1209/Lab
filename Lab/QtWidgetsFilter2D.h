@@ -40,7 +40,7 @@ public slots:
 	void SlotButtonSave_Clicked();
 
 protected:
-	cv::Mat cvImage;
+	cv::Mat cvImage, cvImage_Display;
 	void UpdateImageFromCV(cv::Mat _image, QGraphicsScene* _scene);
 
 private:

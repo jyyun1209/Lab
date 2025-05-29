@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="cuSpatialEdgePreserving.cuh" />
     <ClInclude Include="Filter2D_Exp.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -178,6 +179,7 @@
       <FileType>Document</FileType>
     </CudaCompile>
     <CudaCompile Include="cuMedianFilter.cuh" />
+    <CudaCompile Include="cuSpatialEdgePreserving.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -56,7 +56,9 @@ void QtWidgetsFilter2D::InitializeUI()
 	ui.lineEdit_imagePath->setText(imgName);
 
 	LoadImageToCV(cvImage, imgName.toStdString());
-	UpdateImageFromCV(cvImage, scene);
+
+	cvImage_Display = cvImage.clone();
+	UpdateImageFromCV(cvImage_Display, scene);
 
 	int medianKernel = filter2DSettings->value("Median2DKernel").toInt();
 	ui.lineEdit_medianKernel->setText(QString::number(medianKernel));
@@ -80,7 +82,9 @@ void QtWidgetsFilter2D::SlotButtonImageLoad_Clicked()
 	ui.lineEdit_imagePath->setText(imgName);
 
 	LoadImageToCV(cvImage, imgName.toStdString());
-	UpdateImageFromCV(cvImage, scene);
+
+	cvImage_Display = cvImage.clone();
+	UpdateImageFromCV(cvImage_Display, scene);
 
 	filter2DSettings->setValue("ImagePath", imgName);
 }
@@ -91,12 +95,13 @@ void QtWidgetsFilter2D::SlotCheckboxMedian_Clicked()
 {
 	if (ui.groupBox_median->isChecked())
 	{
-		cv::Mat cvImageFiltered = cvImage.clone();
-		MedianFilter2D(cvImage, cvImageFiltered, ui.lineEdit_medianKernel->text().toInt(), ui.lineEdit_medianKernel->text().toInt(), MODE_MEDIAN2D::CUSTOM_CUDA);
-		UpdateImageFromCV(cvImageFiltered, scene);
+		cvImage_Display = cvImage.clone();
+		MedianFilter2D(cvImage, cvImage_Display, ui.lineEdit_medianKernel->text().toInt(), ui.lineEdit_medianKernel->text().toInt(), MODE_MEDIAN2D::CUSTOM_CUDA);
+		UpdateImageFromCV(cvImage_Display, scene);
 	}
 	else
 	{
+		cvImage_Display = cvImage.clone();
 		UpdateImageFromCV(cvImage, scene);
 	}
 }
@@ -113,12 +118,13 @@ void QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked()
 {
 	if (ui.groupBox_SEP->isChecked())
 	{
-		cv::Mat cvImageFiltered = cvImage.clone();
-		SpatialEdgePreservingFilter(cvImage, cvImageFiltered, ui.lineEdit_sepSigmaS->text().toInt(), ui.lineEdit_sepSigmaR->text().toFloat(), ui.lineEdit_sepIterations->text().toInt());
-		UpdateImageFromCV(cvImage, scene);
+		cvImage_Display = cvImage.clone();
+		SpatialEdgePreservingFilter(cvImage, cvImage_Display, ui.lineEdit_sepSigmaS->text().toInt(), ui.lineEdit_sepSigmaR->text().toFloat(), ui.lineEdit_sepIterations->text().toInt());
+		UpdateImageFromCV(cvImage_Display, scene);
 	}
 	else
 	{
+		cvImage_Display = cvImage.clone();
 		UpdateImageFromCV(cvImage, scene);
 	}
 }
@@ -136,5 +142,5 @@ void QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed()
 void QtWidgetsFilter2D::SlotButtonSave_Clicked()
 {
 	filter2DSettings->setValue("SaveExt", ui.comboBox_extension->currentIndex());
-	SaveImage(cvImage, ".", ui.comboBox_extension->currentText().toStdString());
+	SaveImage(cvImage_Display, ".", ui.comboBox_extension->currentText().toStdString());
 }
