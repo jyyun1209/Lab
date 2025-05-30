@@ -91,8 +91,8 @@ void SavePointCloud(cv::Mat _pointcloud, std::string _saveLocation, std::string 
 
 	if (_pointcloud.empty())
 	{
-		//throw std::invalid_argument("Empty Point Cloud");
-		//return;
+		OutputDebugString(L"Point Cloud is Empty\n");
+		return;
 	}
 
 	//if (_format == ".pcd")
@@ -104,13 +104,15 @@ void SavePointCloud(cv::Mat _pointcloud, std::string _saveLocation, std::string 
 	{
 		// Save as PLY
 		std::string pc_str;
-		for (int i = 0; i < _pointcloud.rows * _pointcloud.cols; i++)
+		for (int r = 0; r < _pointcloud.rows; r++)
 		{
-			pcl::PointXYZRGB point = _pointcloud.points[i];
-
-			char pc_char[100];
-			sprintf(pc_char, "%f %f %f %d %d %d\n", point.x, point.y, point.z, static_cast<int>(point.r), static_cast<int>(point.g), static_cast<int>(point.b));
-			pc_str += pc_char;
+			for (int c = 0; c < _pointcloud.cols; c++)
+			{
+				char pc_char[100];
+				cv::Vec3f* p = _pointcloud.ptr<cv::Vec3f>(r, c);
+				sprintf(pc_char, "%f %f %f\n", p->val[0], p->val[1], p->val[2]);
+				pc_str += pc_char;
+			}
 		}
 
 		std::ofstream file(fileName);
@@ -123,7 +125,7 @@ void SavePointCloud(cv::Mat _pointcloud, std::string _saveLocation, std::string 
 		{
 			file << "ply\n";
 			file << "format ascii 1.0\n";
-			file << "element vertex " << _pointcloud.points.size() << "\n";
+			file << "element vertex " << _pointcloud.rows * _pointcloud.cols << "\n";
 			file << "property float x\n";
 			file << "property float y\n";
 			file << "property float z\n";

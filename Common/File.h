@@ -2,6 +2,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <ctime>
+#include <fstream>
 #include "Common_Exp.h"
 #include "Common/Timer.h"
 
