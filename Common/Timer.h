@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <Windows.h>
 //#include <nvtx3/nvToolsExt.h>
 
 #define TIMER() Timer timer##__LINE__(__FUNCTION__) // timer##__LINE__ : timer + __LINE__ 으로, 해당 코드가 있는 라인의 번호로 timer 이름을 생성
@@ -15,6 +16,7 @@ public:
 		auto end = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<double, std::milli> elapsed = end - start;
 		std::cout << "Function [" << name << "] : " << elapsed.count() << " ms" << std::endl;
+		OutputDebugStringA(("Function [" + name + "] : " + std::to_string(elapsed.count()) + " ms\n").c_str());
 	}
 
 private:

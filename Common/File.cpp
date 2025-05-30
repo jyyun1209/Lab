@@ -79,3 +79,65 @@ void SaveImage(cv::Mat image, std::string saveLocation, std::string _ext)
 		throw std::invalid_argument("Invalid Image Type (Only CV_8U, CV_16U, CV_32F types are supported)");
 	}
 }
+
+void SavePointCloud(cv::Mat _pointcloud, std::string _saveLocation, std::string _format)
+{
+	/*********************************************************************************
+	* cv::Mat 타입의 포인트 클라우드를 받아서 파일로 저장
+	**********************************************************************************/
+	TIMER();
+
+	std::string fileName = _saveLocation + "\\PointCloud" + _format;
+
+	if (_pointcloud.empty())
+	{
+		//throw std::invalid_argument("Empty Point Cloud");
+		//return;
+	}
+
+	//if (_format == ".pcd")
+	//{
+	//	// Save as PCD
+	//	//pcl::io::savePCDFile<pcl::PointXYZRGB>(fileName, _pointcloud, true);
+	//}
+	if (_format == ".ply" || _format == ".xyz")
+	{
+		// Save as PLY
+		std::string pc_str;
+		for (int i = 0; i < _pointcloud.rows * _pointcloud.cols; i++)
+		{
+			pcl::PointXYZRGB point = _pointcloud.points[i];
+
+			char pc_char[100];
+			sprintf(pc_char, "%f %f %f %d %d %d\n", point.x, point.y, point.z, static_cast<int>(point.r), static_cast<int>(point.g), static_cast<int>(point.b));
+			pc_str += pc_char;
+		}
+
+		std::ofstream file(fileName);
+		if (!file.is_open())
+		{
+			throw std::runtime_error("Failed to create file");
+		}
+
+		if (_format == ".ply")
+		{
+			file << "ply\n";
+			file << "format ascii 1.0\n";
+			file << "element vertex " << _pointcloud.points.size() << "\n";
+			file << "property float x\n";
+			file << "property float y\n";
+			file << "property float z\n";
+			file << "property uchar red\n";
+			file << "property uchar green\n";
+			file << "property uchar blue\n";
+			file << "end_header\n";
+		}
+
+		file << pc_str;
+		file.close();
+	}
+	else
+	{
+		throw std::invalid_argument("Invalid File Format (Only .pcd and .ply are supported)");
+	}
+}

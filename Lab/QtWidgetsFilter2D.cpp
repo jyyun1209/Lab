@@ -50,6 +50,8 @@ void QtWidgetsFilter2D::InitializeUI()
 	connect(ui.lineEdit_sepSigmaR, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed);
 	connect(ui.lineEdit_sepIterations, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed);
 	connect(ui.pushButton_save, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonSave_Clicked);
+	connect(ui.pushButton_calibPath, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonCalibLoad_Clicked);
+	connect(ui.pushButton_generate3D, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonGenerate3D_Clicked);
 
 	// Load Settings
 	imgName = filter2DSettings->value("ImagePath").toString();
@@ -74,6 +76,9 @@ void QtWidgetsFilter2D::InitializeUI()
 
 	int saveExt = filter2DSettings->value("SaveExt").toInt();
 	ui.comboBox_extension->setCurrentIndex(saveExt);
+
+	calibName = filter2DSettings->value("CalibPath").toString();
+	ui.lineEdit_calibPath->setText(calibName);
 }
 
 void QtWidgetsFilter2D::SlotButtonImageLoad_Clicked()
@@ -143,4 +148,28 @@ void QtWidgetsFilter2D::SlotButtonSave_Clicked()
 {
 	filter2DSettings->setValue("SaveExt", ui.comboBox_extension->currentIndex());
 	SaveImage(cvImage_Display, ".", ui.comboBox_extension->currentText().toStdString());
+}
+
+
+// Generate 3D
+void QtWidgetsFilter2D::SlotButtonCalibLoad_Clicked()
+{
+	calibName = QFileDialog::getOpenFileName(this, "Select Calibration File", QDir::currentPath(), "All Files (*.*);;Calibration Files (*.yml)");
+	ui.lineEdit_calibPath->setText(calibName);
+
+	filter2DSettings->setValue("CalibPath", calibName);
+}
+
+void QtWidgetsFilter2D::SlotButtonGenerate3D_Clicked()
+{
+	// Load Calibration Data
+	Reconstruction::CalibrationParams calibParams;
+	LoadCalibData(calibName.toStdString(), calibParams);
+
+	// Generate 3D Point Cloud
+	cv::Mat pointCloud;
+	DepthToPoint(cvImage_Display, pointCloud, calibParams.cameraMatrixL);
+
+	// Save Point Cloud
+	savePointCloud(pointcloud, params.saveLocation, ".ply");
 }

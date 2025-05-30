@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Windows.h>
 #include <iostream>
 #include <experimental/filesystem>
 
@@ -10,6 +11,7 @@
 #include "Common/File.h"
 #include "Filter2D/MedianFilter.h"
 #include "Filter2D/SpatialEdgePreserving.h"
+#include "Reconstruction/ReconstructionCore.h"
 
 class QtWidgetsFilter2D : public QWidget
 {
@@ -23,6 +25,7 @@ public:
 	QSettings* filter2DSettings;
 
 	QString imgName;
+	QString calibName;
 
 public slots:
 	// Load Image
@@ -38,6 +41,10 @@ public slots:
 
 	// Save Image
 	void SlotButtonSave_Clicked();
+
+	// Generate 3D
+	void SlotButtonCalibLoad_Clicked();
+	void SlotButtonGenerate3D_Clicked();
 
 protected:
 	cv::Mat cvImage, cvImage_Display;
