@@ -16,3 +16,5 @@
 /Common/x64
 /Doc/Test Image/Depth Map/PointCloud.xyz
 *.tif
+/Reconstruction/x64/Release
+/Reconstruction/x64/Debug
