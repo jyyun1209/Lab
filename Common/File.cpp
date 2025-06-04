@@ -103,15 +103,20 @@ void SavePointCloud(cv::Mat _pointcloud, std::string _saveLocation, std::string 
 	if (_format == ".ply" || _format == ".xyz")
 	{
 		// Save as PLY
+		int cnt = 0;
 		std::string pc_str;
 		for (int r = 0; r < _pointcloud.rows; r++)
 		{
 			for (int c = 0; c < _pointcloud.cols; c++)
 			{
-				char pc_char[100];
 				cv::Vec3f* p = _pointcloud.ptr<cv::Vec3f>(r, c);
-				sprintf(pc_char, "%f %f %f\n", p->val[0], p->val[1], p->val[2]);
+				if (::isnan(p->val[2]) || ::isinf(p->val[2]) || ::isinf(p->val[0]) || ::isinf(p->val[1]))
+					continue;
+
+				char pc_char[100];
+				sprintf(pc_char, "%f %f %f %d %d %d\n", p->val[0], p->val[1], p->val[2], 255, 255, 255);
 				pc_str += pc_char;
+				cnt++;
 			}
 		}
 
@@ -125,7 +130,7 @@ void SavePointCloud(cv::Mat _pointcloud, std::string _saveLocation, std::string 
 		{
 			file << "ply\n";
 			file << "format ascii 1.0\n";
-			file << "element vertex " << _pointcloud.rows * _pointcloud.cols << "\n";
+			file << "element vertex " << cnt << "\n";
 			file << "property float x\n";
 			file << "property float y\n";
 			file << "property float z\n";

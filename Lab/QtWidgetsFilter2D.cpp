@@ -171,5 +171,5 @@ void QtWidgetsFilter2D::SlotButtonGenerate3D_Clicked()
 	DepthToPoint(cvImage_Display, pointCloud, calibParams.cameraMatrixL);
 
 	// Save Point Cloud
-	savePointCloud(pointcloud, params.saveLocation, ".ply");
+	SavePointCloud(pointCloud, ".", ".ply");
 }
