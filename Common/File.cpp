@@ -28,7 +28,7 @@ void LoadImageToCV(cv::Mat& _image, std::string _path)
 
 	if (_image.empty())
 	{
-		throw std::invalid_argument("Empty Image");
+		return;
 	}
 }
 

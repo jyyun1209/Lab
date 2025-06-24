@@ -33,10 +33,16 @@ void QtWidgetsFilter2D::UpdateImageFromCV(cv::Mat _image, QGraphicsScene* _scene
 		qImage = QImage(_image.data, _image.cols, _image.rows, _image.step, QImage::Format_Grayscale16);
 	}
 
-	scene->clear();
-	scene->addPixmap(QPixmap::fromImage(qImage));
-	ui.graphicsView_image->setScene(scene);
+	_scene->clear();
+	_scene->addPixmap(QPixmap::fromImage(qImage));
+
+	ui.graphicsView_image->setScene(_scene);
 	ui.graphicsView_image->show();
+
+	QTimer::singleShot(0, this, [this, _scene]() {
+		ui.graphicsView_image->resetTransform();
+		ui.graphicsView_image->fitInView(_scene->sceneRect(), Qt::KeepAspectRatio);
+	});
 }
 
 void QtWidgetsFilter2D::InitializeUI()
@@ -83,7 +89,13 @@ void QtWidgetsFilter2D::InitializeUI()
 
 void QtWidgetsFilter2D::SlotButtonImageLoad_Clicked()
 {
-	imgName = QFileDialog::getOpenFileName(this, "Select Image", QDir::currentPath(), "All Files (*.*);;Img Files (*.png, *.PNG, *.jpg, *.JPG)");
+	QString currPath = QDir::currentPath();
+	if (!imgName.isEmpty()) {
+		QFileInfo info(imgName);
+		currPath = info.absolutePath();
+	}
+
+	imgName = QFileDialog::getOpenFileName(this, "Select Image", currPath, "All Files (*.*);;Img Files (*.png, *.PNG, *.jpg, *.JPG)");
 	ui.lineEdit_imagePath->setText(imgName);
 
 	LoadImageToCV(cvImage, imgName.toStdString());

@@ -24,5 +24,6 @@ void MainWindow::InitializeUI()
     // Widget
     widgetFilter2D = new QtWidgetsFilter2D(settings, this);
     tabWidgetMain->addTab(widgetFilter2D, QString("Filter2D"));
+
     setCentralWidget(tabWidgetMain);
 }
