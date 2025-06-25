@@ -33,28 +33,31 @@ void QtWidgetsFilter2D::UpdateImageFromCV(cv::Mat _image, QGraphicsScene* _scene
 		qImage = QImage(_image.data, _image.cols, _image.rows, _image.step, QImage::Format_Grayscale16);
 	}
 
+	QPixmap pixmap = QPixmap::fromImage(qImage);
 	_scene->clear();
-	_scene->addPixmap(QPixmap::fromImage(qImage));
+	_scene->addPixmap(pixmap);
+	_scene->setSceneRect(pixmap.rect());
 
 	ui.graphicsView_image->setScene(_scene);
 	ui.graphicsView_image->show();
-
-	QTimer::singleShot(0, this, [this, _scene]() {
-		ui.graphicsView_image->resetTransform();
-		ui.graphicsView_image->fitInView(_scene->sceneRect(), Qt::KeepAspectRatio);
-	});
 }
 
 void QtWidgetsFilter2D::InitializeUI()
 {
 	// Connect Signal <-> Slot
 	connect(ui.pushButton_imagePath, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonImageLoad_Clicked);
+	connect(ui.pushButton_fitZoom, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonFitZoom_Clicked);
 	connect(ui.groupBox_median, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
 	connect(ui.lineEdit_medianKernel, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditMedian_Changed);
 	connect(ui.groupBox_SEP, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked);
 	connect(ui.lineEdit_sepSigmaS, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed);
 	connect(ui.lineEdit_sepSigmaR, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed);
 	connect(ui.lineEdit_sepIterations, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed);
+	connect(ui.groupBox_heatEquation, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxHeatEquation_Clicked);
+	connect(ui.horizontalSlider_alpha, &QSlider::valueChanged, this, &QtWidgetsFilter2D::SlotSliderAlpha_Changed);
+	connect(ui.horizontalSlider_iteration, &QSlider::valueChanged, this, &QtWidgetsFilter2D::SlotSliderIteration_Changed);
+	connect(ui.lineEdit_alpha, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotCheckboxHeatEquation_Clicked);
+	connect(ui.lineEdit_iteration, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotCheckboxHeatEquation_Clicked);
 	connect(ui.pushButton_save, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonSave_Clicked);
 	connect(ui.pushButton_calibPath, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonCalibLoad_Clicked);
 	connect(ui.pushButton_generate3D, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonGenerate3D_Clicked);
@@ -67,6 +70,7 @@ void QtWidgetsFilter2D::InitializeUI()
 
 	cvImage_Display = cvImage.clone();
 	UpdateImageFromCV(cvImage_Display, scene);
+	SlotButtonFitZoom_Clicked();
 
 	int medianKernel = filter2DSettings->value("Median2DKernel").toInt();
 	ui.lineEdit_medianKernel->setText(QString::number(medianKernel));
@@ -79,6 +83,12 @@ void QtWidgetsFilter2D::InitializeUI()
 
 	int sepIterations = filter2DSettings->value("SEPIterations").toInt();
 	ui.lineEdit_sepIterations->setText(QString::number(sepIterations));
+
+	float heatAlpha = filter2DSettings->value("Alpha").toFloat();
+	ui.lineEdit_alpha->setText(QString::number(heatAlpha, 'f', 2));
+
+	int heatIteration = filter2DSettings->value("Iteration").toInt();
+	ui.lineEdit_iteration->setText(QString::number(heatIteration));
 
 	int saveExt = filter2DSettings->value("SaveExt").toInt();
 	ui.comboBox_extension->setCurrentIndex(saveExt);
@@ -102,8 +112,18 @@ void QtWidgetsFilter2D::SlotButtonImageLoad_Clicked()
 
 	cvImage_Display = cvImage.clone();
 	UpdateImageFromCV(cvImage_Display, scene);
+	SlotButtonFitZoom_Clicked();
 
 	filter2DSettings->setValue("ImagePath", imgName);
+}
+
+// Fit Zoom
+void QtWidgetsFilter2D::SlotButtonFitZoom_Clicked()
+{
+	QTimer::singleShot(0, this, [this]() {
+		ui.graphicsView_image->resetTransform();
+		ui.graphicsView_image->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
+	});
 }
 
 
@@ -152,6 +172,37 @@ void QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed()
 	filter2DSettings->setValue("SEPSigmaS", ui.lineEdit_sepSigmaS->text().toInt());
 	filter2DSettings->setValue("SEPSigmaR", ui.lineEdit_sepSigmaR->text().toFloat());
 	filter2DSettings->setValue("SEPIterations", ui.lineEdit_sepIterations->text().toInt());
+}
+
+
+// Heat Equation
+void QtWidgetsFilter2D::SlotCheckboxHeatEquation_Clicked()
+{
+	if (ui.groupBox_heatEquation->isChecked())
+	{
+		cvImage_Display = cvImage.clone();
+		HeatEquationFilter(cvImage, cvImage_Display, ui.lineEdit_alpha->text().toFloat(), ui.lineEdit_iteration->text().toInt());
+		UpdateImageFromCV(cvImage_Display, scene);
+	}
+	else
+	{
+		cvImage_Display = cvImage.clone();
+		UpdateImageFromCV(cvImage, scene);
+	}
+}
+
+void QtWidgetsFilter2D::SlotSliderAlpha_Changed()
+{
+	ui.lineEdit_alpha->setText(QString::number(ui.horizontalSlider_alpha->value() / 100.0, 'f', 2));
+	filter2DSettings->setValue("Alpha", ui.lineEdit_alpha->text().toFloat());
+	SlotCheckboxHeatEquation_Clicked();
+}
+
+void QtWidgetsFilter2D::SlotSliderIteration_Changed()
+{
+	ui.lineEdit_iteration->setText(QString::number(ui.horizontalSlider_iteration->value()));
+	filter2DSettings->setValue("Iteration", ui.lineEdit_iteration->text().toInt());
+	SlotCheckboxHeatEquation_Clicked();
 }
 
 

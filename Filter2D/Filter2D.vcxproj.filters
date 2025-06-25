@@ -32,6 +32,9 @@
     <ClInclude Include="cuSpatialEdgePreserving.cuh">
       <Filter>CUDA</Filter>
     </ClInclude>
+    <ClInclude Include="HeatEquation.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -44,6 +47,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SpatialEdgePreserving.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="HeatEquation.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

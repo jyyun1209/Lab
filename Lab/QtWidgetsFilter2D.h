@@ -11,6 +11,7 @@
 #include "Common/File.h"
 #include "Filter2D/MedianFilter.h"
 #include "Filter2D/SpatialEdgePreserving.h"
+#include "Filter2D/HeatEquation.h"
 #include "Reconstruction/ReconstructionCore.h"
 
 class QtWidgetsFilter2D : public QWidget
@@ -31,6 +32,9 @@ public slots:
 	// Load Image
 	void SlotButtonImageLoad_Clicked();
 
+	// Fit Zoom
+	void SlotButtonFitZoom_Clicked();
+
 	// Median Filter
 	void SlotCheckboxMedian_Clicked();
 	void SlotLineEditMedian_Changed();
@@ -38,6 +42,11 @@ public slots:
 	// Spatial Edge Preserving
 	void SlotCheckboxSpatialEdgePreserving_Clicked();
 	void SlotLineEditSpatialEdgePreserving_Changed();
+
+	// Heat Equation
+	void SlotCheckboxHeatEquation_Clicked();
+	void SlotSliderAlpha_Changed();
+	void SlotSliderIteration_Changed();
 
 	// Save Image
 	void SlotButtonSave_Clicked();
