@@ -26,6 +26,9 @@
     <ClInclude Include="Common_Exp.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Differentiation.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -35,6 +38,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="File.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Differentiation.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

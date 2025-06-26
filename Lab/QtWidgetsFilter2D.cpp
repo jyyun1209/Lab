@@ -47,6 +47,12 @@ void QtWidgetsFilter2D::InitializeUI()
 	// Connect Signal <-> Slot
 	connect(ui.pushButton_imagePath, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonImageLoad_Clicked);
 	connect(ui.pushButton_fitZoom, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonFitZoom_Clicked);
+	connect(ui.pushButton_Retrieve, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonRetrieve_Clicked);
+
+	connect(ui.checkBox_Nothing, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxNothing_Clicked);
+	connect(ui.checkBox_PartialDiffX, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxPartialDiffX_Clicked);
+	connect(ui.checkBox_PartialDiffY, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxPartialDiffY_Clicked);
+
 	connect(ui.groupBox_median, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
 	connect(ui.lineEdit_medianKernel, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditMedian_Changed);
 	connect(ui.groupBox_SEP, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked);
@@ -58,9 +64,11 @@ void QtWidgetsFilter2D::InitializeUI()
 	connect(ui.horizontalSlider_iteration, &QSlider::valueChanged, this, &QtWidgetsFilter2D::SlotSliderIteration_Changed);
 	connect(ui.lineEdit_alpha, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotCheckboxHeatEquation_Clicked);
 	connect(ui.lineEdit_iteration, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotCheckboxHeatEquation_Clicked);
+
 	connect(ui.pushButton_save, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonSave_Clicked);
 	connect(ui.pushButton_calibPath, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonCalibLoad_Clicked);
 	connect(ui.pushButton_generate3D, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonGenerate3D_Clicked);
+
 
 	// Load Settings
 	imgName = filter2DSettings->value("ImagePath").toString();
@@ -126,6 +134,64 @@ void QtWidgetsFilter2D::SlotButtonFitZoom_Clicked()
 	});
 }
 
+// Retrieve
+void QtWidgetsFilter2D::SlotButtonRetrieve_Clicked()
+{
+	if (cvImage.empty())
+	{
+		return;
+	}
+
+	cvImage_Display = cvImage.clone();
+	UpdateImageFromCV(cvImage_Display, scene);
+
+	// Reset all filters
+	ui.checkBox_Nothing->setChecked(true);
+	ui.groupBox_median->setChecked(false);
+	ui.groupBox_SEP->setChecked(false);
+	ui.groupBox_heatEquation->setChecked(false);
+}
+
+
+// Extra
+void QtWidgetsFilter2D::SlotCheckboxNothing_Clicked()
+{
+	if (ui.checkBox_Nothing->isChecked())
+	{
+		cvImage_Display = cvImage.clone();
+		UpdateImageFromCV(cvImage_Display, scene);
+	}
+}
+
+void QtWidgetsFilter2D::SlotCheckboxPartialDiffX_Clicked()
+{
+	if (ui.checkBox_PartialDiffX->isChecked())
+	{
+		cvImage_Display = cvImage.clone();
+		Diff_Partial_X(cvImage_Display, cvImage_Display);
+		UpdateImageFromCV(cvImage_Display, scene);
+	}
+	else
+	{
+		cvImage_Display = cvImage.clone();
+		UpdateImageFromCV(cvImage, scene);
+	}
+}
+
+void QtWidgetsFilter2D::SlotCheckBoxPartialDiffY_Clicked()
+{
+	if (ui.checkBox_PartialDiffY->isChecked())
+	{
+		cvImage_Display = cvImage.clone();
+		Diff_Partial_Y(cvImage_Display, cvImage_Display);
+		UpdateImageFromCV(cvImage_Display, scene);
+	}
+	else
+	{
+		cvImage_Display = cvImage.clone();
+		UpdateImageFromCV(cvImage, scene);
+	}
+}
 
 // Median Filter
 void QtWidgetsFilter2D::SlotCheckboxMedian_Clicked()

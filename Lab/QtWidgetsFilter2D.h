@@ -9,6 +9,7 @@
 #include "ui_QtWidgetsFilter2D.h"
 
 #include "Common/File.h"
+#include "Common/Differentiation.h"
 #include "Filter2D/MedianFilter.h"
 #include "Filter2D/SpatialEdgePreserving.h"
 #include "Filter2D/HeatEquation.h"
@@ -35,6 +36,21 @@ public slots:
 	// Fit Zoom
 	void SlotButtonFitZoom_Clicked();
 
+	// Retrieve
+	void SlotButtonRetrieve_Clicked();
+
+	// ---------------------------------------------------
+	// Extra
+	// ---------------------------------------------------
+
+	void SlotCheckboxNothing_Clicked();
+	void SlotCheckboxPartialDiffX_Clicked();
+	void SlotCheckBoxPartialDiffY_Clicked();
+
+	// ---------------------------------------------------
+	// Filters
+	// ---------------------------------------------------
+	// 
 	// Median Filter
 	void SlotCheckboxMedian_Clicked();
 	void SlotLineEditMedian_Changed();
