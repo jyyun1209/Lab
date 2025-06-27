@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Common_Exp.h" />
+    <ClInclude Include="Define.h" />
     <ClInclude Include="Differentiation.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="framework.h" />

@@ -52,6 +52,7 @@ void QtWidgetsFilter2D::InitializeUI()
 	connect(ui.checkBox_Nothing, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxNothing_Clicked);
 	connect(ui.checkBox_PartialDiffX, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxPartialDiffX_Clicked);
 	connect(ui.checkBox_PartialDiffY, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxPartialDiffY_Clicked);
+	connect(ui.comboBox_PartialMode, &QComboBox::currentTextChanged, this, &QtWidgetsFilter2D::SlotComboBoxPartialDiffMode_Changed);
 
 	connect(ui.groupBox_median, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
 	connect(ui.lineEdit_medianKernel, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditMedian_Changed);
@@ -168,7 +169,7 @@ void QtWidgetsFilter2D::SlotCheckboxPartialDiffX_Clicked()
 	if (ui.checkBox_PartialDiffX->isChecked())
 	{
 		cvImage_Display = cvImage.clone();
-		Diff_Partial_X(cvImage_Display, cvImage_Display);
+		Diff_Partial_X(cvImage_Display, cvImage_Display, DIFF_PARTIAL_MODE(ui.comboBox_PartialMode->currentIndex()));
 		UpdateImageFromCV(cvImage_Display, scene);
 	}
 	else
@@ -190,6 +191,18 @@ void QtWidgetsFilter2D::SlotCheckBoxPartialDiffY_Clicked()
 	{
 		cvImage_Display = cvImage.clone();
 		UpdateImageFromCV(cvImage, scene);
+	}
+}
+
+void QtWidgetsFilter2D::SlotComboBoxPartialDiffMode_Changed()
+{
+	if (ui.checkBox_PartialDiffX->isChecked())
+	{
+		SlotCheckboxPartialDiffX_Clicked();
+	}
+	else if (ui.checkBox_PartialDiffY->isChecked())
+	{
+		// 아직 구현 안됨
 	}
 }
 

@@ -1,0 +1,7 @@
+#pragma once
+
+enum DIFF_PARTIAL_MODE
+{
+	DIFF_PARTIAL_OPENCV = 0,
+	DIFF_PARTIAL_CPP,
+};

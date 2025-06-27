@@ -46,6 +46,7 @@ public slots:
 	void SlotCheckboxNothing_Clicked();
 	void SlotCheckboxPartialDiffX_Clicked();
 	void SlotCheckBoxPartialDiffY_Clicked();
+	void SlotComboBoxPartialDiffMode_Changed();
 
 	// ---------------------------------------------------
 	// Filters
