@@ -51,157 +51,6 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" rowspan="3" colspan="2">
-    <widget class="QGraphicsView_wheelZoom" name="graphicsView_image">
-     <property name="minimumSize">
-      <size>
-       <width>580</width>
-       <height>580</height>
-      </size>
-     </property>
-     <property name="contextMenuPolicy">
-      <enum>Qt::DefaultContextMenu</enum>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="interactive">
-      <bool>true</bool>
-     </property>
-     <property name="dragMode">
-      <enum>QGraphicsView::ScrollHandDrag</enum>
-     </property>
-     <property name="cacheMode">
-      <set>QGraphicsView::CacheNone</set>
-     </property>
-     <property name="transformationAnchor">
-      <enum>QGraphicsView::AnchorUnderMouse</enum>
-     </property>
-     <property name="resizeAnchor">
-      <enum>QGraphicsView::NoAnchor</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="pushButton_fitZoom">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>70</width>
-       <height>24</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Fit Zoom</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="QLabel" name="label_5">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>* Image with 32-bit data is expressed in 16-bit after normalization</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" colspan="4">
-    <widget class="QLineEdit" name="lineEdit_imagePath">
-     <property name="minimumSize">
-      <size>
-       <width>600</width>
-       <height>25</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2">
-    <widget class="QPushButton" name="pushButton_save">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>70</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Save</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="3">
-    <widget class="QPushButton" name="pushButton_Retrieve">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>70</width>
-       <height>24</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Retrieve</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3">
-    <widget class="QComboBox" name="comboBox_extension">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>70</width>
-       <height>0</height>
-      </size>
-     </property>
-     <item>
-      <property name="text">
-       <string>.png</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>.jpg</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>.tif</string>
-      </property>
-     </item>
-    </widget>
-   </item>
    <item row="3" column="2" colspan="3">
     <widget class="QTabWidget" name="tabWidget">
      <property name="minimumSize">
@@ -217,7 +66,7 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
@@ -649,7 +498,7 @@
          <x>0</x>
          <y>10</y>
          <width>200</width>
-         <height>101</height>
+         <height>231</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -738,8 +587,195 @@
          </property>
         </item>
        </widget>
+       <widget class="QCheckBox" name="checkBox_Laplacian">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>90</y>
+          <width>91</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Laplacian</string>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="comboBox_LaplacianMode">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>90</y>
+          <width>69</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <item>
+         <property name="text">
+          <string>OpenCV</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>C++</string>
+         </property>
+        </item>
+       </widget>
       </widget>
      </widget>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="pushButton_fitZoom">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Fit Zoom</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QPushButton" name="pushButton_save">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Save</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" rowspan="3" colspan="2">
+    <widget class="QGraphicsView_wheelZoom" name="graphicsView_image">
+     <property name="minimumSize">
+      <size>
+       <width>580</width>
+       <height>580</height>
+      </size>
+     </property>
+     <property name="contextMenuPolicy">
+      <enum>Qt::DefaultContextMenu</enum>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="interactive">
+      <bool>true</bool>
+     </property>
+     <property name="dragMode">
+      <enum>QGraphicsView::ScrollHandDrag</enum>
+     </property>
+     <property name="cacheMode">
+      <set>QGraphicsView::CacheNone</set>
+     </property>
+     <property name="transformationAnchor">
+      <enum>QGraphicsView::AnchorUnderMouse</enum>
+     </property>
+     <property name="resizeAnchor">
+      <enum>QGraphicsView::NoAnchor</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="4">
+    <widget class="QLineEdit" name="lineEdit_imagePath">
+     <property name="minimumSize">
+      <size>
+       <width>600</width>
+       <height>25</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QLabel" name="label_5">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>* Image with 32-bit data is expressed in 16-bit after normalization</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QPushButton" name="pushButton_Retrieve">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Retrieve</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QComboBox" name="comboBox_extension">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>0</height>
+      </size>
+     </property>
+     <item>
+      <property name="text">
+       <string>.png</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.jpg</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.tif</string>
+      </property>
+     </item>
     </widget>
    </item>
   </layout>

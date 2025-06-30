@@ -43,10 +43,12 @@ public slots:
 	// Extra
 	// ---------------------------------------------------
 
-	void SlotCheckboxNothing_Clicked();
-	void SlotCheckboxPartialDiffX_Clicked();
+	void SlotCheckBoxNothing_Clicked();
+	void SlotCheckBoxPartialDiffX_Clicked();
 	void SlotCheckBoxPartialDiffY_Clicked();
 	void SlotComboBoxPartialDiffMode_Changed();
+	void SlotCheckBoxLaplacian_Clicked();
+	void SlotComboBoxLaplacianMode_Changed();
 
 	// ---------------------------------------------------
 	// Filters
