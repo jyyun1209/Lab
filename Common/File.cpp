@@ -32,7 +32,7 @@ void LoadImageToCV(cv::Mat& _image, std::string _path)
 	}
 }
 
-void SaveImage(cv::Mat image, std::string saveLocation, std::string _ext)
+bool SaveImage(cv::Mat image, std::string saveLocation, std::string _ext)
 {
 	/*********************************************************************************
 	* OpenCV Mat 타입 데이터를 받아서 Image 파일로 저장
@@ -44,11 +44,13 @@ void SaveImage(cv::Mat image, std::string saveLocation, std::string _ext)
 	if (image.empty())
 	{
 		throw std::invalid_argument("Empty Image");
+		return false;
 	}
 
 	if (_ext != ".png" && _ext != ".jpg" && _ext != ".jpeg" && _ext != ".tif" && _ext != ".tiff")
 	{
 		throw std::invalid_argument("Invalid Image Extension (Only .png, .jpg, .jpeg .tif .tiff are supported)");
+		return false;
 	}
 
 	std::time_t now = std::time(nullptr);
@@ -77,7 +79,10 @@ void SaveImage(cv::Mat image, std::string saveLocation, std::string _ext)
 	else
 	{
 		throw std::invalid_argument("Invalid Image Type (Only CV_8U, CV_16U, CV_32F types are supported)");
+		return false;
 	}
+
+	return true;
 }
 
 void SavePointCloud(cv::Mat _pointcloud, std::string _saveLocation, std::string _format)

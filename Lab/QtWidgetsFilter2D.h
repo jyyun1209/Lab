@@ -6,6 +6,7 @@
 
 #include <QWidget>
 #include <QFileDialog>
+#include <QMessageBox>
 #include "ui_QtWidgetsFilter2D.h"
 
 #include "Common/File.h"
@@ -47,13 +48,14 @@ public slots:
 	void SlotCheckBoxPartialDiffX_Clicked();
 	void SlotCheckBoxPartialDiffY_Clicked();
 	void SlotComboBoxPartialDiffMode_Changed();
+	void SlotComboBoxDiffDirection_Changed();
 	void SlotCheckBoxLaplacian_Clicked();
 	void SlotComboBoxLaplacianMode_Changed();
 
 	// ---------------------------------------------------
 	// Filters
 	// ---------------------------------------------------
-	// 
+	
 	// Median Filter
 	void SlotCheckboxMedian_Clicked();
 	void SlotLineEditMedian_Changed();

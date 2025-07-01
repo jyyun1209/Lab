@@ -21,7 +21,7 @@ bool HeatEquationFilter(cv::Mat _src, cv::Mat& _dst, float _alpha, int _iteratio
 
 		for (int iter = 0; iter < _iterations; iter++)
 		{
-			cv::Laplacian(_dst, laplacian_I, CV_32F);
+			Laplacian(_dst, laplacian_I, LAPLACIAN_OPENCV);
 			_dst = _dst + _alpha * laplacian_I;
 		}
 		_dst.convertTo(_dst, CV_8UC1);

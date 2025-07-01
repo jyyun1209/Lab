@@ -2,6 +2,7 @@
 
 #include <opencv2/opencv.hpp>
 #include "Filter2D_Exp.h"
+#include "Common/Differentiation.h"
 #include "Windows.h"
 
 

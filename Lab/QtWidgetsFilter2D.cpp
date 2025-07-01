@@ -52,8 +52,9 @@ void QtWidgetsFilter2D::InitializeUI()
 	connect(ui.checkBox_Nothing, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxNothing_Clicked);
 	connect(ui.checkBox_PartialDiffX, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxPartialDiffX_Clicked);
 	connect(ui.checkBox_PartialDiffY, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxPartialDiffY_Clicked);
-	connect(ui.checkBox_Laplacian, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxLaplacian_Clicked);
 	connect(ui.comboBox_PartialMode, &QComboBox::currentTextChanged, this, &QtWidgetsFilter2D::SlotComboBoxPartialDiffMode_Changed);
+	connect(ui.comboBox_DiffDirection, &QComboBox::currentTextChanged, this, &QtWidgetsFilter2D::SlotComboBoxDiffDirection_Changed);
+	connect(ui.checkBox_Laplacian, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxLaplacian_Clicked);
 	connect(ui.comboBox_LaplacianMode, &QComboBox::currentTextChanged, this, &QtWidgetsFilter2D::SlotComboBoxLaplacianMode_Changed);
 
 	connect(ui.groupBox_median, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
@@ -171,7 +172,7 @@ void QtWidgetsFilter2D::SlotCheckBoxPartialDiffX_Clicked()
 	if (ui.checkBox_PartialDiffX->isChecked())
 	{
 		cvImage_Display = cvImage.clone();
-		Diff_Partial_X(cvImage_Display, cvImage_Display, DIFF_PARTIAL_MODE(ui.comboBox_PartialMode->currentIndex()));
+		Diff_Partial_X(cvImage_Display, cvImage_Display, DIFF_PARTIAL_MODE(ui.comboBox_PartialMode->currentIndex()), DIFF_DIRECTION(ui.comboBox_DiffDirection->currentIndex()));
 		UpdateImageFromCV(cvImage_Display, scene);
 	}
 	else
@@ -186,7 +187,7 @@ void QtWidgetsFilter2D::SlotCheckBoxPartialDiffY_Clicked()
 	if (ui.checkBox_PartialDiffY->isChecked())
 	{
 		cvImage_Display = cvImage.clone();
-		Diff_Partial_Y(cvImage_Display, cvImage_Display, DIFF_PARTIAL_MODE(ui.comboBox_PartialMode->currentIndex()));
+		Diff_Partial_Y(cvImage_Display, cvImage_Display, DIFF_PARTIAL_MODE(ui.comboBox_PartialMode->currentIndex()), DIFF_DIRECTION(ui.comboBox_DiffDirection->currentIndex()));
 		UpdateImageFromCV(cvImage_Display, scene);
 	}
 	else
@@ -197,6 +198,18 @@ void QtWidgetsFilter2D::SlotCheckBoxPartialDiffY_Clicked()
 }
 
 void QtWidgetsFilter2D::SlotComboBoxPartialDiffMode_Changed()
+{
+	if (ui.checkBox_PartialDiffX->isChecked())
+	{
+		SlotCheckBoxPartialDiffX_Clicked();
+	}
+	else if (ui.checkBox_PartialDiffY->isChecked())
+	{
+		SlotCheckBoxPartialDiffY_Clicked();
+	}
+}
+
+void QtWidgetsFilter2D::SlotComboBoxDiffDirection_Changed()
 {
 	if (ui.checkBox_PartialDiffX->isChecked())
 	{
@@ -314,7 +327,16 @@ void QtWidgetsFilter2D::SlotSliderIteration_Changed()
 void QtWidgetsFilter2D::SlotButtonSave_Clicked()
 {
 	filter2DSettings->setValue("SaveExt", ui.comboBox_extension->currentIndex());
-	SaveImage(cvImage_Display, ".", ui.comboBox_extension->currentText().toStdString());
+	bool ret = SaveImage(cvImage_Display, ".", ui.comboBox_extension->currentText().toStdString());
+
+	if (ret)
+	{
+		QMessageBox::information(this, "Information", "Image saved successfully.");
+	}
+	else
+	{
+		QMessageBox::warning(this, "Warning", "Image save failed.");
+	}
 }
 
 
