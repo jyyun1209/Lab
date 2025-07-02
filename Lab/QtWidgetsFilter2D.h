@@ -55,6 +55,7 @@ public slots:
 	void SlotComboBoxLaplacianMode_Changed();
 	void SlotCheckBoxGrayscale_Clicked();
 	void SlotCheckBoxSaltAndPepper_Clicked();
+	void SlotCheckBoxSpeckleNoise_Clicked();
 
 	// ---------------------------------------------------
 	// Filters

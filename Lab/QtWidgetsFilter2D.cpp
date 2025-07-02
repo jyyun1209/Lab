@@ -65,6 +65,8 @@ void QtWidgetsFilter2D::InitializeUI()
 	connect(ui.checkBox_Grayscale, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxGrayscale_Clicked);
 	connect(ui.checkBox_SaltAndPepper, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxSaltAndPepper_Clicked);
 	connect(ui.spinBox_SaltAndPepper, QOverload<int>::of(&QSpinBox::valueChanged), this, &QtWidgetsFilter2D::SlotCheckBoxSaltAndPepper_Clicked);
+	connect(ui.checkBox_SpeckleNoise, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxSpeckleNoise_Clicked);
+	connect(ui.doubleSpinBox_SpeckleNoise, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &QtWidgetsFilter2D::SlotCheckBoxSpeckleNoise_Clicked);
 	connect(ui.groupBox_median, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
 	connect(ui.lineEdit_medianKernel, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditMedian_Changed);
 	connect(ui.groupBox_SEP, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked);
@@ -279,6 +281,21 @@ void QtWidgetsFilter2D::SlotCheckBoxSaltAndPepper_Clicked()
 	{
 		cvImage_Display = cvImage.clone();
 		SaltAndPepper(cvImage_Display, cvImage_Display, ui.spinBox_SaltAndPepper->value());
+		UpdateImageFromCV(cvImage_Display, scene);
+	}
+	else
+	{
+		cvImage_Display = cvImage.clone();
+		UpdateImageFromCV(cvImage, scene);
+	}
+}
+
+void QtWidgetsFilter2D::SlotCheckBoxSpeckleNoise_Clicked()
+{
+	if (ui.checkBox_SpeckleNoise->isChecked())
+	{
+		cvImage_Display = cvImage.clone();
+		SpeckleNoise(cvImage_Display, cvImage_Display, ui.doubleSpinBox_SpeckleNoise->value());
 		UpdateImageFromCV(cvImage_Display, scene);
 	}
 	else
