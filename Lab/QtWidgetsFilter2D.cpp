@@ -63,7 +63,8 @@ void QtWidgetsFilter2D::InitializeUI()
 	connect(ui.checkBox_Laplacian, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxLaplacian_Clicked);
 	connect(ui.comboBox_LaplacianMode, &QComboBox::currentTextChanged, this, &QtWidgetsFilter2D::SlotComboBoxLaplacianMode_Changed);
 	connect(ui.checkBox_Grayscale, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxGrayscale_Clicked);
-
+	connect(ui.checkBox_SaltAndPepper, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxSaltAndPepper_Clicked);
+	connect(ui.spinBox_SaltAndPepper, QOverload<int>::of(&QSpinBox::valueChanged), this, &QtWidgetsFilter2D::SlotCheckBoxSaltAndPepper_Clicked);
 	connect(ui.groupBox_median, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
 	connect(ui.lineEdit_medianKernel, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditMedian_Changed);
 	connect(ui.groupBox_SEP, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked);
@@ -272,9 +273,19 @@ void QtWidgetsFilter2D::SlotCheckBoxGrayscale_Clicked()
 	}
 }
 
-void SlotCheckBoxSaltAndPepper_Clicked()
+void QtWidgetsFilter2D::SlotCheckBoxSaltAndPepper_Clicked()
 {
-
+	if (ui.checkBox_SaltAndPepper->isChecked())
+	{
+		cvImage_Display = cvImage.clone();
+		SaltAndPepper(cvImage_Display, cvImage_Display, ui.spinBox_SaltAndPepper->value());
+		UpdateImageFromCV(cvImage_Display, scene);
+	}
+	else
+	{
+		cvImage_Display = cvImage.clone();
+		UpdateImageFromCV(cvImage, scene);
+	}
 }
 
 

@@ -1036,6 +1036,19 @@
          <bool>true</bool>
         </property>
        </widget>
+       <widget class="QSpinBox" name="spinBox_SaltAndPepper">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>130</y>
+          <width>42</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="maximum">
+         <number>100</number>
+        </property>
+       </widget>
       </widget>
      </widget>
     </widget>
