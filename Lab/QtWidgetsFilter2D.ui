@@ -26,8 +26,8 @@
    <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QPushButton" name="pushButton_imagePath">
+   <item row="2" column="8">
+    <widget class="QComboBox" name="comboBox_extension">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -36,28 +36,75 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>80</width>
-       <height>25</height>
+       <width>70</width>
+       <height>0</height>
       </size>
      </property>
-     <property name="baseSize">
+     <item>
+      <property name="text">
+       <string>.png</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.jpg</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.tif</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="8">
+    <widget class="QPushButton" name="pushButton_Retrieve">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
       <size>
-       <width>80</width>
-       <height>25</height>
+       <width>70</width>
+       <height>24</height>
       </size>
      </property>
      <property name="text">
-      <string>Select Image</string>
+      <string>Retrieve</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1" colspan="7">
-    <widget class="QLineEdit" name="lineEdit_imagePath">
+   <item row="1" column="7">
+    <widget class="QPushButton" name="pushButton_fitZoom">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
-       <width>600</width>
-       <height>25</height>
+       <width>70</width>
+       <height>24</height>
       </size>
+     </property>
+     <property name="text">
+      <string>Fit Zoom</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QLabel" name="label_5">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>* Image with 32-bit data is expressed in 16-bit after normalization</string>
      </property>
     </widget>
    </item>
@@ -101,41 +148,53 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="7">
-    <widget class="QPushButton" name="pushButton_fitZoom">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>70</width>
-       <height>24</height>
-      </size>
-     </property>
+   <item row="4" column="5">
+    <widget class="QLabel" name="label_7">
      <property name="text">
-      <string>Fit Zoom</string>
+      <string>Avg. Intensity:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="8">
-    <widget class="QPushButton" name="pushButton_Retrieve">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+   <item row="4" column="3">
+    <widget class="QLabel" name="label_8">
+     <property name="text">
+      <string>Img Size:</string>
      </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>28</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="1" colspan="7">
+    <widget class="QLineEdit" name="lineEdit_imagePath">
      <property name="minimumSize">
       <size>
-       <width>70</width>
-       <height>24</height>
+       <width>600</width>
+       <height>25</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="6">
+    <widget class="QLabel" name="label_AvgIntensity">
+     <property name="minimumSize">
+      <size>
+       <width>50</width>
+       <height>0</height>
       </size>
      </property>
      <property name="text">
-      <string>Retrieve</string>
+      <string/>
      </property>
     </widget>
    </item>
@@ -158,8 +217,8 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="8">
-    <widget class="QComboBox" name="comboBox_extension">
+   <item row="0" column="0">
+    <widget class="QPushButton" name="pushButton_imagePath">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -168,25 +227,32 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>70</width>
+       <width>80</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="baseSize">
+      <size>
+       <width>80</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Select Image</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="4">
+    <widget class="QLabel" name="label_ImgSize">
+     <property name="minimumSize">
+      <size>
+       <width>50</width>
        <height>0</height>
       </size>
      </property>
-     <item>
-      <property name="text">
-       <string>.png</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>.jpg</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>.tif</string>
-      </property>
-     </item>
+     <property name="text">
+      <string/>
+     </property>
     </widget>
    </item>
    <item row="3" column="7" colspan="2">
@@ -509,7 +575,7 @@
             <x>10</x>
             <y>330</y>
             <width>181</width>
-            <height>91</height>
+            <height>111</height>
            </rect>
           </property>
           <property name="title">
@@ -528,7 +594,7 @@
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>50</y>
+             <y>80</y>
              <width>41</width>
              <height>16</height>
             </rect>
@@ -544,7 +610,7 @@
            <property name="geometry">
             <rect>
              <x>50</x>
-             <y>20</y>
+             <y>50</y>
              <width>81</width>
              <height>22</height>
             </rect>
@@ -575,7 +641,7 @@
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>20</y>
+             <y>50</y>
              <width>41</width>
              <height>16</height>
             </rect>
@@ -591,7 +657,7 @@
            <property name="geometry">
             <rect>
              <x>50</x>
-             <y>50</y>
+             <y>80</y>
              <width>81</width>
              <height>22</height>
             </rect>
@@ -610,7 +676,7 @@
            <property name="geometry">
             <rect>
              <x>140</x>
-             <y>20</y>
+             <y>50</y>
              <width>31</width>
              <height>22</height>
             </rect>
@@ -626,7 +692,7 @@
            <property name="geometry">
             <rect>
              <x>140</x>
-             <y>50</y>
+             <y>80</y>
              <width>31</width>
              <height>22</height>
             </rect>
@@ -634,6 +700,34 @@
            <property name="text">
             <string>0</string>
            </property>
+          </widget>
+          <widget class="QComboBox" name="comboBox_AnisotropicDiffusionMode">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>20</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>OpenCV</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>C++</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>C++ (ver.2)</string>
+            </property>
+           </item>
           </widget>
          </widget>
         </widget>
@@ -678,7 +772,7 @@
       <widget class="QLineEdit" name="lineEdit_calibPath">
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>10</x>
          <y>40</y>
          <width>191</width>
          <height>25</height>
@@ -926,74 +1020,24 @@
          <bool>true</bool>
         </property>
        </widget>
+       <widget class="QCheckBox" name="checkBox_SaltAndPepper">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>130</y>
+          <width>111</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Salt and Pepper</string>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
       </widget>
      </widget>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="QLabel" name="label_5">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>* Image with 32-bit data is expressed in 16-bit after normalization</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="2">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>116</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="4" column="3">
-    <widget class="QLabel" name="label_8">
-     <property name="text">
-      <string>Img Size:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="4">
-    <widget class="QLabel" name="label_ImgSize">
-     <property name="minimumSize">
-      <size>
-       <width>50</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="5">
-    <widget class="QLabel" name="label_7">
-     <property name="text">
-      <string>Avg. Intensity:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="6">
-    <widget class="QLabel" name="label_AvgIntensity">
-     <property name="minimumSize">
-      <size>
-       <width>50</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
     </widget>
    </item>
   </layout>

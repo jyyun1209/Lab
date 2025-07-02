@@ -53,6 +53,7 @@ public slots:
 	void SlotCheckBoxLaplacian_Clicked();
 	void SlotComboBoxLaplacianMode_Changed();
 	void SlotCheckBoxGrayscale_Clicked();
+	void SlotCheckBoxSaltAndPepper_Clicked();
 
 	// ---------------------------------------------------
 	// Filters

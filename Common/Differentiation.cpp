@@ -5,7 +5,7 @@ void Diff_Partial_X(cv::Mat _src, cv::Mat& _dst, DIFF_PARTIAL_MODE _mode, DIFF_D
 	/* ----------------------------------------------------------
 	 * X 방향 편미분 (Border type: BORDER_REPLICATE)
 	---------------------------------------------------------- */
-	OutputDebugString(L"Diff_Partial_X called\n");
+	//OutputDebugString(L"Diff_Partial_X called\n");
 
 	if (_src.empty())
 	{
@@ -35,7 +35,7 @@ void Diff_Partial_Y(cv::Mat _src, cv::Mat& _dst, DIFF_PARTIAL_MODE _mode, DIFF_D
 	/* ----------------------------------------------------------
 	 * Y 방향 편미분
 	---------------------------------------------------------- */
-	OutputDebugString(L"Diff_Partial_Y called\n");
+	//OutputDebugString(L"Diff_Partial_Y called\n");
 
 	if (_src.empty())
 	{
@@ -66,7 +66,7 @@ void Laplacian(cv::Mat _src, cv::Mat& _dst, LAPLACIAN_MODE _mode)
 	/* ----------------------------------------------------------
 	 * 라플라시안
 	---------------------------------------------------------- */
-	OutputDebugString(L"Laplacian called\n");
+	//OutputDebugString(L"Laplacian called\n");
 
 	if (_src.empty())
 	{
@@ -88,7 +88,7 @@ void Laplacian(cv::Mat _src, cv::Mat& _dst, LAPLACIAN_MODE _mode)
 
 void Diff_Partial_X_OpenCV(cv::Mat _src, cv::Mat& _dst, DIFF_DIRECTION _dir)
 {
-	OutputDebugString(L"Diff_Partial_X OpenCV Mode called\n");
+	//OutputDebugString(L"Diff_Partial_X OpenCV Mode called\n");
 
 	if (_src.empty())
 	{
@@ -136,7 +136,7 @@ void Diff_Partial_X_OpenCV(cv::Mat _src, cv::Mat& _dst, DIFF_DIRECTION _dir)
 void Diff_Partial_X_CPP(cv::Mat _src, cv::Mat& _dst, DIFF_DIRECTION _dir)
 {
 	// 현재 DIFF_DIRECTION 적용 안됨
-	OutputDebugString(L"Diff_Partial_X C++ Mode called\n");
+	//OutputDebugString(L"Diff_Partial_X C++ Mode called\n");
 
 	if (_src.empty())
 	{
@@ -174,7 +174,7 @@ void Laplacian_OpenCV(cv::Mat _src, cv::Mat& _dst)
 	* 
 	* => [1 -2  1]이 2차 편미분이기 때문
 	* ---------------------------------------------------------*/
-	OutputDebugString(L"Laplacian OpenCV Mode called\n");
+	//OutputDebugString(L"Laplacian OpenCV Mode called\n");
 
 	if (_src.empty())
 	{

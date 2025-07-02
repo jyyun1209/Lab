@@ -76,6 +76,7 @@ void QtWidgetsFilter2D::InitializeUI()
 	connect(ui.lineEdit_alpha, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotCheckboxHeatEquation_Clicked);
 	connect(ui.lineEdit_iteration, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotCheckboxHeatEquation_Clicked);
 	connect(ui.groupBox_AnisotropicDiffusion, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxAnisotropicDiffusion_Clicked);
+	connect(ui.comboBox_AnisotropicDiffusionMode, &QComboBox::currentTextChanged, this, &QtWidgetsFilter2D::SlotCheckboxAnisotropicDiffusion_Clicked);
 	connect(ui.horizontalSlider_k, &QSlider::valueChanged, this, &QtWidgetsFilter2D::SlotSliderK_Changed);
 	connect(ui.horizontalSlider_iteration_AD, &QSlider::valueChanged, this, &QtWidgetsFilter2D::SlotSliderIterationAD_Changed);
 	connect(ui.lineEdit_k, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotCheckboxAnisotropicDiffusion_Clicked);
@@ -271,6 +272,11 @@ void QtWidgetsFilter2D::SlotCheckBoxGrayscale_Clicked()
 	}
 }
 
+void SlotCheckBoxSaltAndPepper_Clicked()
+{
+
+}
+
 
 // Median Filter
 void QtWidgetsFilter2D::SlotCheckboxMedian_Clicked()
@@ -357,7 +363,7 @@ void QtWidgetsFilter2D::SlotCheckboxAnisotropicDiffusion_Clicked()
 	if (ui.groupBox_AnisotropicDiffusion->isChecked())
 	{
 		cvImage_Display = cvImage.clone();
-		AnisotropicDiffusion(cvImage, cvImage_Display, ui.lineEdit_k->text().toFloat(), ui.lineEdit_iteration_AD->text().toInt());
+		AnisotropicDiffusion(cvImage, cvImage_Display, ui.lineEdit_k->text().toFloat(), ui.lineEdit_iteration_AD->text().toInt(), ANISOTROPIC_DIFFUSION_MODE(ui.comboBox_AnisotropicDiffusionMode->currentIndex()));
 		UpdateImageFromCV(cvImage_Display, scene);
 	}
 	else
