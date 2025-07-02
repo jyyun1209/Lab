@@ -40,6 +40,12 @@ void QtWidgetsFilter2D::UpdateImageFromCV(cv::Mat _image, QGraphicsScene* _scene
 
 	ui.graphicsView_image->setScene(_scene);
 	ui.graphicsView_image->show();
+
+	ui.label_ImgSize->setText(QString::number(_image.cols) + " x " + QString::number(_image.rows));
+
+	cv::Scalar avgIntensity = cv::mean(_image);
+	float avgIntensity_f = (avgIntensity[0] + avgIntensity[1] + avgIntensity[2]) / _image.channels();
+	ui.label_AvgIntensity->setText(QString::number(avgIntensity_f, 'f', 2));
 }
 
 void QtWidgetsFilter2D::InitializeUI()
@@ -56,6 +62,7 @@ void QtWidgetsFilter2D::InitializeUI()
 	connect(ui.comboBox_DiffDirection, &QComboBox::currentTextChanged, this, &QtWidgetsFilter2D::SlotComboBoxDiffDirection_Changed);
 	connect(ui.checkBox_Laplacian, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxLaplacian_Clicked);
 	connect(ui.comboBox_LaplacianMode, &QComboBox::currentTextChanged, this, &QtWidgetsFilter2D::SlotComboBoxLaplacianMode_Changed);
+	connect(ui.checkBox_Grayscale, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxGrayscale_Clicked);
 
 	connect(ui.groupBox_median, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
 	connect(ui.lineEdit_medianKernel, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditMedian_Changed);
@@ -68,6 +75,11 @@ void QtWidgetsFilter2D::InitializeUI()
 	connect(ui.horizontalSlider_iteration, &QSlider::valueChanged, this, &QtWidgetsFilter2D::SlotSliderIteration_Changed);
 	connect(ui.lineEdit_alpha, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotCheckboxHeatEquation_Clicked);
 	connect(ui.lineEdit_iteration, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotCheckboxHeatEquation_Clicked);
+	connect(ui.groupBox_AnisotropicDiffusion, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxAnisotropicDiffusion_Clicked);
+	connect(ui.horizontalSlider_k, &QSlider::valueChanged, this, &QtWidgetsFilter2D::SlotSliderK_Changed);
+	connect(ui.horizontalSlider_iteration_AD, &QSlider::valueChanged, this, &QtWidgetsFilter2D::SlotSliderIterationAD_Changed);
+	connect(ui.lineEdit_k, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotCheckboxAnisotropicDiffusion_Clicked);
+	connect(ui.lineEdit_iteration_AD, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotCheckboxAnisotropicDiffusion_Clicked);
 
 	connect(ui.pushButton_save, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonSave_Clicked);
 	connect(ui.pushButton_calibPath, &QPushButton::clicked, this, &QtWidgetsFilter2D::SlotButtonCalibLoad_Clicked);
@@ -244,6 +256,22 @@ void QtWidgetsFilter2D::SlotComboBoxLaplacianMode_Changed()
 	}
 }
 
+void QtWidgetsFilter2D::SlotCheckBoxGrayscale_Clicked()
+{
+	if (ui.checkBox_Grayscale->isChecked())
+	{
+		cvImage_Display = cvImage.clone();
+		Color2Grayscale(cvImage_Display, cvImage_Display);
+		UpdateImageFromCV(cvImage_Display, scene);
+	}
+	else
+	{
+		cvImage_Display = cvImage.clone();
+		UpdateImageFromCV(cvImage, scene);
+	}
+}
+
+
 // Median Filter
 void QtWidgetsFilter2D::SlotCheckboxMedian_Clicked()
 {
@@ -320,6 +348,37 @@ void QtWidgetsFilter2D::SlotSliderIteration_Changed()
 	ui.lineEdit_iteration->setText(QString::number(ui.horizontalSlider_iteration->value()));
 	filter2DSettings->setValue("Iteration", ui.lineEdit_iteration->text().toInt());
 	SlotCheckboxHeatEquation_Clicked();
+}
+
+
+// Anisotropic Diffusion
+void QtWidgetsFilter2D::SlotCheckboxAnisotropicDiffusion_Clicked()
+{
+	if (ui.groupBox_AnisotropicDiffusion->isChecked())
+	{
+		cvImage_Display = cvImage.clone();
+		AnisotropicDiffusion(cvImage, cvImage_Display, ui.lineEdit_k->text().toFloat(), ui.lineEdit_iteration_AD->text().toInt());
+		UpdateImageFromCV(cvImage_Display, scene);
+	}
+	else
+	{
+		cvImage_Display = cvImage.clone();
+		UpdateImageFromCV(cvImage, scene);
+	}
+}
+
+void QtWidgetsFilter2D::SlotSliderK_Changed()
+{
+	ui.lineEdit_k->setText(QString::number(ui.horizontalSlider_k->value() / 100.0, 'f', 2));
+	filter2DSettings->setValue("K", ui.lineEdit_k->text().toFloat());
+	SlotCheckboxAnisotropicDiffusion_Clicked();
+}
+
+void QtWidgetsFilter2D::SlotSliderIterationAD_Changed()
+{
+	ui.lineEdit_iteration_AD->setText(QString::number(ui.horizontalSlider_iteration_AD->value()));
+	filter2DSettings->setValue("Iteration_AD", ui.lineEdit_iteration_AD->text().toInt());
+	SlotCheckboxAnisotropicDiffusion_Clicked();
 }
 
 

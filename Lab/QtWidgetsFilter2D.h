@@ -11,9 +11,10 @@
 
 #include "Common/File.h"
 #include "Common/Differentiation.h"
+#include "Common/ColorMode.h"
 #include "Filter2D/MedianFilter.h"
 #include "Filter2D/SpatialEdgePreserving.h"
-#include "Filter2D/HeatEquation.h"
+#include "Filter2D/Diffusion.h"
 #include "Reconstruction/ReconstructionCore.h"
 
 class QtWidgetsFilter2D : public QWidget
@@ -51,6 +52,7 @@ public slots:
 	void SlotComboBoxDiffDirection_Changed();
 	void SlotCheckBoxLaplacian_Clicked();
 	void SlotComboBoxLaplacianMode_Changed();
+	void SlotCheckBoxGrayscale_Clicked();
 
 	// ---------------------------------------------------
 	// Filters
@@ -68,6 +70,11 @@ public slots:
 	void SlotCheckboxHeatEquation_Clicked();
 	void SlotSliderAlpha_Changed();
 	void SlotSliderIteration_Changed();
+
+	// Anisotropic Diffusion
+	void SlotCheckboxAnisotropicDiffusion_Clicked();
+	void SlotSliderK_Changed();
+	void SlotSliderIterationAD_Changed();
 
 	// Save Image
 	void SlotButtonSave_Clicked();

@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ColorMode.h" />
     <ClInclude Include="Common_Exp.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="Differentiation.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ColorMode.cpp" />
     <ClCompile Include="Differentiation.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="File.cpp" />

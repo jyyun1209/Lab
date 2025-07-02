@@ -51,7 +51,145 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="2" colspan="3">
+   <item row="0" column="1" colspan="7">
+    <widget class="QLineEdit" name="lineEdit_imagePath">
+     <property name="minimumSize">
+      <size>
+       <width>600</width>
+       <height>25</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" rowspan="3" colspan="7">
+    <widget class="QGraphicsView_wheelZoom" name="graphicsView_image">
+     <property name="minimumSize">
+      <size>
+       <width>580</width>
+       <height>580</height>
+      </size>
+     </property>
+     <property name="contextMenuPolicy">
+      <enum>Qt::DefaultContextMenu</enum>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="interactive">
+      <bool>true</bool>
+     </property>
+     <property name="dragMode">
+      <enum>QGraphicsView::ScrollHandDrag</enum>
+     </property>
+     <property name="cacheMode">
+      <set>QGraphicsView::CacheNone</set>
+     </property>
+     <property name="transformationAnchor">
+      <enum>QGraphicsView::AnchorUnderMouse</enum>
+     </property>
+     <property name="resizeAnchor">
+      <enum>QGraphicsView::NoAnchor</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="7">
+    <widget class="QPushButton" name="pushButton_fitZoom">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Fit Zoom</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="8">
+    <widget class="QPushButton" name="pushButton_Retrieve">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Retrieve</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="7">
+    <widget class="QPushButton" name="pushButton_save">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Save</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="8">
+    <widget class="QComboBox" name="comboBox_extension">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>0</height>
+      </size>
+     </property>
+     <item>
+      <property name="text">
+       <string>.png</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.jpg</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.tif</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="3" column="7" colspan="2">
     <widget class="QTabWidget" name="tabWidget">
      <property name="minimumSize">
       <size>
@@ -66,312 +204,441 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
        <string>Filters</string>
       </attribute>
-      <widget class="QGroupBox" name="groupBox_Filters">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>10</y>
-         <width>200</width>
-         <height>371</height>
-        </rect>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>200</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="title">
-        <string>Filters</string>
-       </property>
-       <widget class="QGroupBox" name="groupBox_median">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>26</y>
-          <width>180</width>
-          <height>51</height>
-         </rect>
-        </property>
-        <property name="title">
-         <string>Median</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-        <widget class="QLineEdit" name="lineEdit_medianKernel">
-         <property name="geometry">
-          <rect>
-           <x>72</x>
-           <y>20</y>
-           <width>81</width>
-           <height>20</height>
-          </rect>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_Filters">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="text">
-          <string>3</string>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>0</height>
+          </size>
          </property>
+         <property name="title">
+          <string>Filters</string>
+         </property>
+         <widget class="QGroupBox" name="groupBox_median">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>26</y>
+            <width>180</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>Median</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <widget class="QLineEdit" name="lineEdit_medianKernel">
+           <property name="geometry">
+            <rect>
+             <x>72</x>
+             <y>20</y>
+             <width>81</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>3</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>20</y>
+             <width>56</width>
+             <height>12</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Kernel</string>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QGroupBox" name="groupBox_SEP">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>80</y>
+            <width>180</width>
+            <height>131</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>Spatial Edge Preserving</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <widget class="QLineEdit" name="lineEdit_sepSigmaS">
+           <property name="geometry">
+            <rect>
+             <x>70</x>
+             <y>30</y>
+             <width>81</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>3</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_2">
+           <property name="geometry">
+            <rect>
+             <x>8</x>
+             <y>30</y>
+             <width>56</width>
+             <height>12</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Sigma S</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_3">
+           <property name="geometry">
+            <rect>
+             <x>8</x>
+             <y>100</y>
+             <width>56</width>
+             <height>12</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Iterations</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_sepIterations">
+           <property name="geometry">
+            <rect>
+             <x>70</x>
+             <y>100</y>
+             <width>81</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>3</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_4">
+           <property name="geometry">
+            <rect>
+             <x>8</x>
+             <y>60</y>
+             <width>56</width>
+             <height>12</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Sigma R</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_sepSigmaR">
+           <property name="geometry">
+            <rect>
+             <x>70</x>
+             <y>60</y>
+             <width>81</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>0.1</string>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QGroupBox" name="groupBox_heatEquation">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>220</y>
+            <width>180</width>
+            <height>101</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>Heat Equation</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <widget class="QSlider" name="horizontalSlider_alpha">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>50</x>
+             <y>30</y>
+             <width>81</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="invertedAppearance">
+            <bool>false</bool>
+           </property>
+           <property name="invertedControls">
+            <bool>false</bool>
+           </property>
+           <property name="tickPosition">
+            <enum>QSlider::NoTicks</enum>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_alpha">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>30</y>
+             <width>41</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>alpha</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_alpha">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>30</y>
+             <width>31</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_iteration">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>60</y>
+             <width>41</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>iter.</string>
+           </property>
+          </widget>
+          <widget class="QSlider" name="horizontalSlider_iteration">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>50</x>
+             <y>60</y>
+             <width>81</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_iteration">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>60</y>
+             <width>31</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QGroupBox" name="groupBox_AnisotropicDiffusion">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>330</y>
+            <width>181</width>
+            <height>91</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>Anisotropic Diffusion</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <widget class="QLabel" name="label_iteration_AD">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>50</y>
+             <width>41</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>iter.</string>
+           </property>
+          </widget>
+          <widget class="QSlider" name="horizontalSlider_k">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>50</x>
+             <y>20</y>
+             <width>81</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="invertedAppearance">
+            <bool>false</bool>
+           </property>
+           <property name="invertedControls">
+            <bool>false</bool>
+           </property>
+           <property name="tickPosition">
+            <enum>QSlider::NoTicks</enum>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_k">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>20</y>
+             <width>41</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>k</string>
+           </property>
+          </widget>
+          <widget class="QSlider" name="horizontalSlider_iteration_AD">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>50</x>
+             <y>50</y>
+             <width>81</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_k">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>20</y>
+             <width>31</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_iteration_AD">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>50</y>
+             <width>31</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </widget>
         </widget>
-        <widget class="QLabel" name="label">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>20</y>
-           <width>56</width>
-           <height>12</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Kernel</string>
-         </property>
-        </widget>
-       </widget>
-       <widget class="QGroupBox" name="groupBox_SEP">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>80</y>
-          <width>180</width>
-          <height>131</height>
-         </rect>
-        </property>
-        <property name="title">
-         <string>Spatial Edge Preserving</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-        <widget class="QLineEdit" name="lineEdit_sepSigmaS">
-         <property name="geometry">
-          <rect>
-           <x>70</x>
-           <y>30</y>
-           <width>81</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>3</string>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_2">
-         <property name="geometry">
-          <rect>
-           <x>8</x>
-           <y>30</y>
-           <width>56</width>
-           <height>12</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Sigma S</string>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_3">
-         <property name="geometry">
-          <rect>
-           <x>8</x>
-           <y>100</y>
-           <width>56</width>
-           <height>12</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Iterations</string>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="lineEdit_sepIterations">
-         <property name="geometry">
-          <rect>
-           <x>70</x>
-           <y>100</y>
-           <width>81</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>3</string>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_4">
-         <property name="geometry">
-          <rect>
-           <x>8</x>
-           <y>60</y>
-           <width>56</width>
-           <height>12</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Sigma R</string>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="lineEdit_sepSigmaR">
-         <property name="geometry">
-          <rect>
-           <x>70</x>
-           <y>60</y>
-           <width>81</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>0.1</string>
-         </property>
-        </widget>
-       </widget>
-       <widget class="QGroupBox" name="groupBox_heatEquation">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>220</y>
-          <width>180</width>
-          <height>101</height>
-         </rect>
-        </property>
-        <property name="title">
-         <string>Heat Equation</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-        <widget class="QSlider" name="horizontalSlider_alpha">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>50</x>
-           <y>30</y>
-           <width>81</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="singleStep">
-          <number>1</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="invertedAppearance">
-          <bool>false</bool>
-         </property>
-         <property name="invertedControls">
-          <bool>false</bool>
-         </property>
-         <property name="tickPosition">
-          <enum>QSlider::NoTicks</enum>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_alpha">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>30</y>
-           <width>41</width>
-           <height>16</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>alpha</string>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="lineEdit_alpha">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>140</x>
-           <y>30</y>
-           <width>31</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>0</string>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_iteration">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>60</y>
-           <width>41</width>
-           <height>16</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>iter.</string>
-         </property>
-        </widget>
-        <widget class="QSlider" name="horizontalSlider_iteration">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>50</x>
-           <y>60</y>
-           <width>81</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="maximum">
-          <number>300</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="lineEdit_iteration">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>140</x>
-           <y>60</y>
-           <width>31</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>0</string>
-         </property>
-        </widget>
-       </widget>
-      </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -643,96 +910,24 @@
          </property>
         </item>
        </widget>
+       <widget class="QCheckBox" name="checkBox_Grayscale">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>110</y>
+          <width>91</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Grayscale</string>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
       </widget>
      </widget>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="pushButton_fitZoom">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>70</width>
-       <height>24</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Fit Zoom</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2">
-    <widget class="QPushButton" name="pushButton_save">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>70</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Save</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" rowspan="3" colspan="2">
-    <widget class="QGraphicsView_wheelZoom" name="graphicsView_image">
-     <property name="minimumSize">
-      <size>
-       <width>580</width>
-       <height>580</height>
-      </size>
-     </property>
-     <property name="contextMenuPolicy">
-      <enum>Qt::DefaultContextMenu</enum>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="interactive">
-      <bool>true</bool>
-     </property>
-     <property name="dragMode">
-      <enum>QGraphicsView::ScrollHandDrag</enum>
-     </property>
-     <property name="cacheMode">
-      <set>QGraphicsView::CacheNone</set>
-     </property>
-     <property name="transformationAnchor">
-      <enum>QGraphicsView::AnchorUnderMouse</enum>
-     </property>
-     <property name="resizeAnchor">
-      <enum>QGraphicsView::NoAnchor</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" colspan="4">
-    <widget class="QLineEdit" name="lineEdit_imagePath">
-     <property name="minimumSize">
-      <size>
-       <width>600</width>
-       <height>25</height>
-      </size>
-     </property>
     </widget>
    </item>
    <item row="4" column="0" colspan="2">
@@ -748,54 +943,57 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="3">
-    <widget class="QPushButton" name="pushButton_Retrieve">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+   <item row="4" column="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="minimumSize">
+     <property name="sizeHint" stdset="0">
       <size>
-       <width>70</width>
-       <height>24</height>
+       <width>116</width>
+       <height>20</height>
       </size>
      </property>
+    </spacer>
+   </item>
+   <item row="4" column="3">
+    <widget class="QLabel" name="label_8">
      <property name="text">
-      <string>Retrieve</string>
+      <string>Img Size:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="3">
-    <widget class="QComboBox" name="comboBox_extension">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
+   <item row="4" column="4">
+    <widget class="QLabel" name="label_ImgSize">
      <property name="minimumSize">
       <size>
-       <width>70</width>
+       <width>50</width>
        <height>0</height>
       </size>
      </property>
-     <item>
-      <property name="text">
-       <string>.png</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>.jpg</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>.tif</string>
-      </property>
-     </item>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="5">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Avg. Intensity:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="6">
+    <widget class="QLabel" name="label_AvgIntensity">
+     <property name="minimumSize">
+      <size>
+       <width>50</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
     </widget>
    </item>
   </layout>

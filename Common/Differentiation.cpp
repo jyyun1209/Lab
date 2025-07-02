@@ -3,7 +3,7 @@
 void Diff_Partial_X(cv::Mat _src, cv::Mat& _dst, DIFF_PARTIAL_MODE _mode, DIFF_DIRECTION _dir)
 {
 	/* ----------------------------------------------------------
-	 * X 방향 편미분
+	 * X 방향 편미분 (Border type: BORDER_REPLICATE)
 	---------------------------------------------------------- */
 	OutputDebugString(L"Diff_Partial_X called\n");
 
@@ -125,7 +125,7 @@ void Diff_Partial_X_OpenCV(cv::Mat _src, cv::Mat& _dst, DIFF_DIRECTION _dir)
 	if (_src.channels() == 1)
 	{
 		cv::filter2D(_dst, _dst, CV_32FC1, kernel, anchor, 0, cv::BORDER_REPLICATE);
-		_dst.convertTo(_dst, CV_8UC1);
+		_dst.convertTo(_dst, _src.type());
 	}
 	else
 	{
@@ -155,7 +155,7 @@ void Diff_Partial_X_CPP(cv::Mat _src, cv::Mat& _dst, DIFF_DIRECTION _dir)
 			}
 			_dst.at<float>(r, 0) = 0; // 마지막 열은 편미분이 정의되지 않으므로 0으로 설정 (BORDER_REPLICATE와 같은 효과)
 		}
-		_dst.convertTo(_dst, CV_8UC1);
+		_dst.convertTo(_dst, _src.type());
 	}
 	else
 	{
