@@ -1,5 +1,21 @@
 #include "SpatialEdgePreserving.h"
 
+bool DomainTransformFilter(cv::Mat _src, cv::Mat& _dst, int _sigma_s, double _sigma_r, int _num_iterations, DOMAIN_TRANSFORM_MODE _mode)
+{
+	switch (_mode)
+	{
+	case DOMAIN_TRANSFORM_V1:
+		return SpatialEdgePreservingFilter_v1(_src, _dst, _sigma_s, _sigma_r, _num_iterations);
+		break;
+
+	case DOMAIN_TRANSFORM_V2:
+		return SpatialEdgePreservingFilter_v2(_src, _dst, _sigma_s, _sigma_r, _num_iterations);
+		break;
+	}
+
+	return false;
+}
+
 int largerMin(cv::Mat src, float value, int offset)
 {
 	// 1차원 행렬만 가능
@@ -14,7 +30,7 @@ int largerMin(cv::Mat src, float value, int offset)
 	return 0;
 }
 
-bool TransformedDomainBoxFilter_Horizontal(cv::Mat src, cv::Mat dst, cv::Mat ct, double box_radius)
+bool TransformedDomainBoxFilter_Horizontal(cv::Mat src, cv::Mat& dst, cv::Mat ct, double box_radius)
 {
 	TIMER();
 
@@ -92,7 +108,7 @@ bool TransformedDomainBoxFilter_Horizontal(cv::Mat src, cv::Mat dst, cv::Mat ct,
 	return true;
 }
 
-bool SpatialEdgePreservingFilter(cv::Mat _src, cv::Mat & _dst, int _sigma_s, double _sigma_r, int _num_iterations)
+bool SpatialEdgePreservingFilter_v1(cv::Mat _src, cv::Mat & _dst, int _sigma_s, double _sigma_r, int _num_iterations)
 {
 	TIMER();
 	//TIMER_CUDA();
@@ -229,6 +245,168 @@ bool SpatialEdgePreservingFilter(cv::Mat _src, cv::Mat & _dst, int _sigma_s, dou
 
 	src_temp.convertTo(src_temp, _src.type());
 	src_temp.copyTo(_dst);
+
+	return true;
+}
+
+
+float GetSigmaH(float _sigma_H, int _num_iterations, int _curr_iteration)
+{
+	return _sigma_H * sqrt(3) * (pow(2, _num_iterations - (_curr_iteration + 1)) / sqrt(pow(4, _num_iterations) - 1));
+}
+
+void DomainTransform(cv::Mat _src, cv::Mat& _ct, float _sigma_s, float _sigma_r)
+{
+	// Domain Transform
+	cv::Mat src_float;
+	_src.convertTo(src_float, CV_32F);
+
+	cv::normalize(src_float, src_float, 0, 1, cv::NORM_MINMAX); // 정규화하지 않으면 누적합 계산 시, 값이 너무 커져서 최대 범위를 넘어감
+
+	cv::Mat dI_dx;
+	Diff_Partial_X(src_float, dI_dx, DIFF_PARTIAL_OPENCV, DIFF_DIRECTION_RIGHT);
+
+	_ct = 1 + (_sigma_s / _sigma_r) * cv::abs(dI_dx);
+	for (int c = 1; c < src_float.cols; c++)
+	{
+		#pragma omp parallel for
+		for (int r = 0; r < src_float.rows; r++)
+		{
+			_ct.at<float>(r, c) = _ct.at<float>(r, c) + _ct.at<float>(r, c - 1);
+		}
+	}
+}
+
+int FindLargerMin(cv::Mat _row, float _target, int _offset_min, int _offset_max)
+{
+	// 1차원 행렬에서 _target보다 큰 값 중 가장 작은 값의 인덱스를 0과 _offset 사이에서 찾음
+
+	if (_offset_min == -1)
+	{
+		_offset_min = 0;
+	}
+	if (_offset_max == -1)
+	{
+		_offset_max = _row.cols - 1;
+	}
+
+	int min = _offset_min;
+	int max = _offset_max;
+	int curr;
+	while (true)
+	{
+		if (min > _row.cols - 1)
+		{
+			return _row.cols - 1;
+		}
+		if (max < 0)
+		{
+			return 0;
+		}
+
+		curr = min + (max - min) / 2;
+		if (_row.at<float>(curr) > _target)
+		{
+			if (curr == 0 || _row.at<float>(curr - 1) <= _target)
+			{
+				return curr;
+			}
+			else
+			{
+				max = curr - 1;
+			}
+		}
+		else
+		{
+			min = curr + 1;
+		}
+	}
+
+	return 0;
+}
+
+void NormalizedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _box_radius)
+{
+	// x 방향 Normalized Convolution
+	// _src: cv::MAt_<float>
+
+	cv::Mat x_lower, x_upper;
+	x_lower = _ct - _box_radius;
+	x_upper = _ct + _box_radius;
+
+	cv::Mat x_lower_idx, x_upper_idx;
+	x_lower_idx = cv::Mat::zeros(_src.size(), CV_32S);
+	x_upper_idx = cv::Mat::zeros(_src.size(), CV_32S);
+
+	cv::Mat ct_row;
+	for (int r = 0; r < _src.rows; r++)
+	{
+		ct_row = _ct.row(r);
+		for (int c = 0; c < _src.cols; c++)
+		{
+			x_lower_idx.at<int>(r, c) = FindLargerMin(ct_row, x_lower.at<float>(r, c), 0, c);
+			x_upper_idx.at<int>(r, c) = FindLargerMin(ct_row, x_upper.at<float>(r, c), x_lower_idx.at<int>(r, c), ct_row.cols - 1);
+		}
+	}
+
+	cv::Mat accumulated_src = _src.clone();
+	#pragma omp parallel for collapse(2)
+	for (int r = 0; r < _src.rows; r++)
+	{
+		for (int c = 1; c < _src.cols; c++)
+		{
+			accumulated_src.at<float>(r, c) += accumulated_src.at<float>(r, c - 1);
+		}
+	}
+
+	_dst = cv::Mat::zeros(_src.size(), CV_32F);
+	int x_lower_idx_val, x_upper_idx_val;
+	for (int r = 0; r < _src.rows; r++)
+	{
+		for (int c = 0; c < _src.cols; c++)
+		{
+			x_lower_idx_val = x_lower_idx.at<int>(r, c);
+			x_upper_idx_val = x_upper_idx.at<int>(r, c);
+			_dst.at<float>(r, c) = (accumulated_src.at<float>(r, x_upper_idx_val) - accumulated_src.at<float>(r, x_lower_idx_val)) / (x_upper_idx_val - x_lower_idx_val + 1);
+		}
+	}
+}
+
+bool SpatialEdgePreservingFilter_v2(cv::Mat _src, cv::Mat& _dst, int _sigma_s, double _sigma_r, int _num_iterations)
+{
+	// _sigma_s와 _sigma_r을 합쳐서 하나의 파라미터로 만들어도 될 것 같음. 추후 검토
+	TIMER();
+
+	if (_src.empty() || _src.channels() > 1)
+	{
+		OutputDebugString(L"Invalid Input Image.");
+		return false;
+	}
+
+	cv::Mat ct_x, ct_y;
+	DomainTransform(_src, ct_x, _sigma_s, _sigma_r);
+	DomainTransform(_src.t(), ct_y, _sigma_s, _sigma_r);
+
+	cv::Mat src_float;
+	_src.convertTo(src_float, CV_32F);
+	float sigma_H = static_cast<float>(_sigma_s);
+	float sigma_H_i, box_radius;
+	for (int iter = 0; iter < _num_iterations; iter++)
+	{
+		sigma_H_i = GetSigmaH(sigma_H, _num_iterations, iter);
+		box_radius = sqrt(3) * sigma_H_i;
+
+		NormalizedConvolution(src_float, src_float, ct_x, box_radius);
+		NormalizedConvolution(src_float.t(), src_float, ct_y, box_radius);
+		cv::transpose(src_float, src_float);
+	}
+
+	double min, max;
+	cv::minMaxLoc(src_float, &min, &max);
+	//src_float = src_float - min;
+	//src_float = src_float / (max - min);
+	cv::normalize(src_float, src_float, min, max, cv::NORM_MINMAX);
+	src_float.convertTo(_dst, _src.type());
 
 	return true;
 }

@@ -75,6 +75,7 @@ public slots:
 
 	// Spatial Edge Preserving
 	void SlotCheckboxSpatialEdgePreserving_Clicked();
+	void SlotComboBoxSEPMode_Changed();
 	void SlotLineEditSpatialEdgePreserving_Changed();
 
 	// Heat Equation

@@ -81,6 +81,7 @@ void QtWidgetsFilter2D::InitializeUI()
 	connect(ui.lineEdit_medianKernel, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditMedian_Changed);
 	connect(ui.comboBox_MedianMode, &QComboBox::currentTextChanged, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
 	connect(ui.groupBox_SEP, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked);
+	connect(ui.comboBox_SEP_Mode, &QComboBox::currentTextChanged, this, &QtWidgetsFilter2D::SlotComboBoxSEPMode_Changed);
 	connect(ui.lineEdit_sepSigmaS, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed);
 	connect(ui.lineEdit_sepSigmaR, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed);
 	connect(ui.lineEdit_sepIterations, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed);
@@ -445,7 +446,8 @@ void QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked()
 	if (ui.groupBox_SEP->isChecked())
 	{
 		cvImage_Display = cvImage.clone();
-		SpatialEdgePreservingFilter(cvImage, cvImage_Display, ui.lineEdit_sepSigmaS->text().toInt(), ui.lineEdit_sepSigmaR->text().toFloat(), ui.lineEdit_sepIterations->text().toInt());
+		DomainTransformFilter(cvImage, cvImage_Display, ui.lineEdit_sepSigmaS->text().toInt(), ui.lineEdit_sepSigmaR->text().toFloat(), ui.lineEdit_sepIterations->text().toInt(), 
+			DOMAIN_TRANSFORM_MODE(ui.comboBox_SEP_Mode->currentIndex()));
 		UpdateImageFromCV(cvImage_Display, scene);
 	}
 	else
@@ -454,6 +456,17 @@ void QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked()
 		UpdateImageFromCV(cvImage, scene);
 	}
 }
+
+void QtWidgetsFilter2D::SlotComboBoxSEPMode_Changed()
+{
+	if (ui.groupBox_SEP->isChecked())
+	{
+		QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked();
+	}
+
+	filter2DSettings->setValue("SEPMode", ui.comboBox_SEP_Mode->currentIndex());
+}
+
 
 void QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed()
 {
