@@ -67,6 +67,14 @@ void QtWidgetsFilter2D::InitializeUI()
 	connect(ui.spinBox_SaltAndPepper, QOverload<int>::of(&QSpinBox::valueChanged), this, &QtWidgetsFilter2D::SlotCheckBoxSaltAndPepper_Clicked);
 	connect(ui.checkBox_SpeckleNoise, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxSpeckleNoise_Clicked);
 	connect(ui.doubleSpinBox_SpeckleNoise, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &QtWidgetsFilter2D::SlotCheckBoxSpeckleNoise_Clicked);
+	connect(ui.checkBox_RGBGain, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxRGBGain_Clicked);
+	connect(ui.lineEdit_R, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditR_Changed);
+	connect(ui.lineEdit_G, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditG_Changed);
+	connect(ui.lineEdit_B, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditB_Changed);
+	connect(ui.horizontalSlider_R, &QSlider::valueChanged, this, &QtWidgetsFilter2D::SlotSliderR_Changed);
+	connect(ui.horizontalSlider_G, &QSlider::valueChanged, this, &QtWidgetsFilter2D::SlotSliderG_Changed);
+	connect(ui.horizontalSlider_B, &QSlider::valueChanged, this, &QtWidgetsFilter2D::SlotSliderB_Changed);
+
 	connect(ui.groupBox_median, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
 	connect(ui.lineEdit_medianKernel, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditMedian_Changed);
 	connect(ui.groupBox_SEP, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked);
@@ -302,6 +310,84 @@ void QtWidgetsFilter2D::SlotCheckBoxSpeckleNoise_Clicked()
 	{
 		cvImage_Display = cvImage.clone();
 		UpdateImageFromCV(cvImage, scene);
+	}
+}
+
+void QtWidgetsFilter2D::SlotCheckBoxRGBGain_Clicked()
+{
+	if (ui.checkBox_RGBGain->isChecked())
+	{
+		cvImage_Display = cvImage.clone();
+		RGBGain(cvImage_Display, cvImage_Display,
+			ui.lineEdit_R->text().toFloat(),
+			ui.lineEdit_G->text().toFloat(),
+			ui.lineEdit_B->text().toFloat());
+		UpdateImageFromCV(cvImage_Display, scene);
+	}
+	else
+	{
+		cvImage_Display = cvImage.clone();
+		UpdateImageFromCV(cvImage, scene);
+	}
+}
+
+void QtWidgetsFilter2D::SlotLineEditR_Changed()
+{
+	ui.horizontalSlider_R->setValue(ui.lineEdit_R->text().toFloat() * 100.0);
+
+	if (ui.checkBox_RGBGain->isChecked())
+	{
+		SlotCheckBoxRGBGain_Clicked();
+	}
+}
+
+void QtWidgetsFilter2D::SlotLineEditG_Changed()
+{
+	ui.horizontalSlider_G->setValue(ui.lineEdit_G->text().toFloat() * 100.0);
+
+	if (ui.checkBox_RGBGain->isChecked())
+	{
+		SlotCheckBoxRGBGain_Clicked();
+	}
+}
+
+void QtWidgetsFilter2D::SlotLineEditB_Changed()
+{
+	ui.horizontalSlider_B->setValue(ui.lineEdit_B->text().toFloat() * 100.0);
+
+	if (ui.checkBox_RGBGain->isChecked())
+	{
+		SlotCheckBoxRGBGain_Clicked();
+	}
+}
+
+void QtWidgetsFilter2D::SlotSliderR_Changed()
+{
+	ui.lineEdit_R->setText(QString::number(ui.horizontalSlider_R->value() / 100.0, 'f', 2));
+
+	if (ui.checkBox_RGBGain->isChecked())
+	{
+		SlotCheckBoxRGBGain_Clicked();
+	}
+}
+
+void QtWidgetsFilter2D::SlotSliderG_Changed()
+{
+	ui.lineEdit_G->setText(QString::number(ui.horizontalSlider_G->value() / 100.0, 'f', 2));
+
+	if (ui.checkBox_RGBGain->isChecked())
+	{
+		SlotCheckBoxRGBGain_Clicked();
+	}
+}
+
+void QtWidgetsFilter2D::SlotSliderB_Changed()
+{
+	ui.lineEdit_B->setText(QString::number(ui.horizontalSlider_B->value() / 100.0, 'f', 2));
+
+	if (ui.checkBox_RGBGain->isChecked())
+	{
+		SlotCheckBoxRGBGain_Clicked();
 	}
 }
 
