@@ -86,6 +86,8 @@ public slots:
 	void SlotCheckboxAnisotropicDiffusion_Clicked();
 	void SlotSliderK_Changed();
 	void SlotSliderIterationAD_Changed();
+	void SlotLineEditK_Changed();
+	void SlotLineEditIterationAD_Changed();
 
 	// Save Image
 	void SlotButtonSave_Clicked();

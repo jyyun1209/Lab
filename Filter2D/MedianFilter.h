@@ -3,20 +3,10 @@
 #include <opencv2/opencv.hpp>
 #include "Filter2D_Exp.h"
 #include "Common/Timer.h"
+#include "Common/Define.h"
 
 #include "cuMedianFilter.cuh"
 
-
-enum class MODE_MEDIAN2D
-{
-	OPENCV = 0,
-	OPENCV_UMAT,
-	OPENCV_CUDA,
-	CUSTOM_CPP,
-	CUSTOM_CUDA,
-	CUSTOM_CPP_FINITE_ONLY,
-	CUSTOM_CUDA_FINITE_ONLY,
-};
 
 enum class MODE_BORDER
 {

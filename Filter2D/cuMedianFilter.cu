@@ -109,6 +109,14 @@ __global__ void d_medianBlur(float* d_inputImage, float* d_outputImage, int widt
 void cuMedianBlur(cv::Mat h_inputImage, cv::Mat& h_outputImage, int kernel_x, int kernel_y, int borderType, bool finiteOnly)
 {
 	//TIMER_CUDA();
+	if (h_inputImage.empty() || h_inputImage.channels() != 1)
+	{
+		h_outputImage = h_inputImage.clone();
+		return;
+	}
+
+	int src_type = h_inputImage.type();
+	h_inputImage.convertTo(h_inputImage, CV_32F);
 
 	float* d_inputImage, * d_outputImage;
 	int size = h_inputImage.rows * h_inputImage.cols * sizeof(float);
@@ -130,6 +138,8 @@ void cuMedianBlur(cv::Mat h_inputImage, cv::Mat& h_outputImage, int kernel_x, in
 
 	/* Memory Copy (Device to Host) */
 	CUDA_CHECK(cudaMemcpyAsync((float*)h_outputImage.data, d_outputImage, size, cudaMemcpyDeviceToHost, stream));
+
+	h_outputImage.convertTo(h_outputImage, src_type);
 
 	/* Memory Deallocation */
 	CUDA_CHECK(cudaStreamDestroy(stream));
