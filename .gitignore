@@ -7,5 +7,14 @@
 
 /Lab/x64/Debug
 /Lab/x64/Release
+/Filter2D/x64/Debug
+/Filter2D/x64/Release
+
+/3rdParty
 
 /git token.txt
+/Common/x64
+/Doc/Test Image/Depth Map/PointCloud.xyz
+*.tif
+/Reconstruction/x64/Release
+/Reconstruction/x64/Debug
