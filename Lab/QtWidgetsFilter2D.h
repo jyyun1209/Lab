@@ -56,6 +56,7 @@ public slots:
 	void SlotCheckBoxGrayscale_Clicked();
 	void SlotCheckBoxSaltAndPepper_Clicked();
 	void SlotCheckBoxSpeckleNoise_Clicked();
+	void SlotCheckBoxGaussianNoise_Clicked();
 	void SlotCheckBoxRGBGain_Clicked();
 	void SlotLineEditR_Changed();
 	void SlotLineEditG_Changed();

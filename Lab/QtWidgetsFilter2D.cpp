@@ -67,6 +67,8 @@ void QtWidgetsFilter2D::InitializeUI()
 	connect(ui.spinBox_SaltAndPepper, QOverload<int>::of(&QSpinBox::valueChanged), this, &QtWidgetsFilter2D::SlotCheckBoxSaltAndPepper_Clicked);
 	connect(ui.checkBox_SpeckleNoise, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxSpeckleNoise_Clicked);
 	connect(ui.doubleSpinBox_SpeckleNoise, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &QtWidgetsFilter2D::SlotCheckBoxSpeckleNoise_Clicked);
+	connect(ui.checkBox_GaussianNoise, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxGaussianNoise_Clicked);
+	connect(ui.doubleSpinBox_GaussianNoise, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &QtWidgetsFilter2D::SlotCheckBoxGaussianNoise_Clicked);
 	connect(ui.checkBox_RGBGain, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxRGBGain_Clicked);
 	connect(ui.lineEdit_R, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditR_Changed);
 	connect(ui.lineEdit_G, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditG_Changed);
@@ -304,6 +306,21 @@ void QtWidgetsFilter2D::SlotCheckBoxSpeckleNoise_Clicked()
 	{
 		cvImage_Display = cvImage.clone();
 		SpeckleNoise(cvImage_Display, cvImage_Display, ui.doubleSpinBox_SpeckleNoise->value());
+		UpdateImageFromCV(cvImage_Display, scene);
+	}
+	else
+	{
+		cvImage_Display = cvImage.clone();
+		UpdateImageFromCV(cvImage, scene);
+	}
+}
+
+void QtWidgetsFilter2D::SlotCheckBoxGaussianNoise_Clicked()
+{
+	if (ui.checkBox_GaussianNoise->isChecked())
+	{
+		cvImage_Display = cvImage.clone();
+		GaussianNoise(cvImage_Display, cvImage_Display, ui.doubleSpinBox_GaussianNoise->value());
 		UpdateImageFromCV(cvImage_Display, scene);
 	}
 	else
