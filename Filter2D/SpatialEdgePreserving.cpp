@@ -32,7 +32,7 @@ int largerMin(cv::Mat src, float value, int offset)
 
 bool TransformedDomainBoxFilter_Horizontal(cv::Mat src, cv::Mat& dst, cv::Mat ct, double box_radius)
 {
-	TIMER();
+	//TIMER();
 
 	std::chrono::steady_clock::time_point start, end;
 	std::chrono::duration<double, std::milli> elapsed;
@@ -229,7 +229,6 @@ bool SpatialEdgePreservingFilter_v1(cv::Mat _src, cv::Mat & _dst, int _sigma_s, 
 	}
 
 	src_temp = src_temp * (max - min) + min;
-	//src_temp = src_temp * (max - min + 1);
 
 	#pragma omp parallel for collapse (2)
 	for (int i = 0; i < src_temp.rows; i++)
@@ -295,16 +294,12 @@ int FindLargerMin(cv::Mat _row, float _target, int _offset_min, int _offset_max)
 	int curr;
 	while (true)
 	{
-		if (min > _row.cols - 1)
+		if (min == max)
 		{
-			return _row.cols - 1;
-		}
-		if (max < 0)
-		{
-			return 0;
+			return min;
 		}
 
-		curr = min + (max - min) / 2;
+		curr = min + std::round((max - min) / 2);
 		if (_row.at<float>(curr) > _target)
 		{
 			if (curr == 0 || _row.at<float>(curr - 1) <= _target)
@@ -339,18 +334,20 @@ void NormalizedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _box_
 	x_upper_idx = cv::Mat::zeros(_src.size(), CV_32S);
 
 	cv::Mat ct_row;
+	#pragma omp parallel for collapse(2)
 	for (int r = 0; r < _src.rows; r++)
 	{
 		ct_row = _ct.row(r);
 		for (int c = 0; c < _src.cols; c++)
 		{
-			x_lower_idx.at<int>(r, c) = FindLargerMin(ct_row, x_lower.at<float>(r, c), 0, c);
-			x_upper_idx.at<int>(r, c) = FindLargerMin(ct_row, x_upper.at<float>(r, c), x_lower_idx.at<int>(r, c), ct_row.cols - 1);
+			x_lower_idx.at<int>(r, c) = FindLargerMin(ct_row, x_lower.at<float>(r, c), c == 0 ? 0 : x_lower_idx.at<int>(r, c - 1), c);
+			x_upper_idx.at<int>(r, c) = FindLargerMin(ct_row, x_upper.at<float>(r, c), c == 0 ? 0 : x_upper_idx.at<int>(r, c - 1), ct_row.cols - 1);
 		}
 	}
 
-	cv::Mat accumulated_src = _src.clone();
-	#pragma omp parallel for collapse(2)
+	cv::Mat accumulated_src;
+	_src.copyTo(accumulated_src);
+	#pragma omp parallel for
 	for (int r = 0; r < _src.rows; r++)
 	{
 		for (int c = 1; c < _src.cols; c++)
@@ -359,15 +356,29 @@ void NormalizedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _box_
 		}
 	}
 
-	_dst = cv::Mat::zeros(_src.size(), CV_32F);
+	accumulated_src.copyTo(_dst);
 	int x_lower_idx_val, x_upper_idx_val;
+	#pragma omp parallel for collapse(2)
 	for (int r = 0; r < _src.rows; r++)
 	{
 		for (int c = 0; c < _src.cols; c++)
 		{
-			x_lower_idx_val = x_lower_idx.at<int>(r, c);
-			x_upper_idx_val = x_upper_idx.at<int>(r, c);
-			_dst.at<float>(r, c) = (accumulated_src.at<float>(r, x_upper_idx_val) - accumulated_src.at<float>(r, x_lower_idx_val)) / (x_upper_idx_val - x_lower_idx_val + 1);
+			x_lower_idx_val = x_lower_idx.at<int>(r, c) = x_lower_idx.at<int>(r, c) - 1;
+			x_upper_idx_val = x_upper_idx.at<int>(r, c) == _src.cols - 1 ? _src.cols - 1 : x_upper_idx.at<int>(r, c) - 1;
+
+			if (x_lower_idx_val != x_upper_idx_val)
+			{
+				if (x_lower_idx_val < 0)
+				{
+					_dst.at<float>(r, c) = (accumulated_src.at<float>(r, x_upper_idx_val) - 0)
+						/ (x_upper_idx_val - x_lower_idx_val);
+				}
+				else
+				{
+					_dst.at<float>(r, c) = (accumulated_src.at<float>(r, x_upper_idx_val) - accumulated_src.at<float>(r, x_lower_idx_val))
+						/ (x_upper_idx_val - x_lower_idx_val);
+				}
+			}
 		}
 	}
 }
@@ -401,11 +412,6 @@ bool SpatialEdgePreservingFilter_v2(cv::Mat _src, cv::Mat& _dst, int _sigma_s, d
 		cv::transpose(src_float, src_float);
 	}
 
-	double min, max;
-	cv::minMaxLoc(src_float, &min, &max);
-	//src_float = src_float - min;
-	//src_float = src_float / (max - min);
-	cv::normalize(src_float, src_float, min, max, cv::NORM_MINMAX);
 	src_float.convertTo(_dst, _src.type());
 
 	return true;
