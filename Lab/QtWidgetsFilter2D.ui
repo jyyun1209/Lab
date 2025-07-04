@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>825</width>
+    <width>1121</width>
     <height>655</height>
    </rect>
   </property>
@@ -316,7 +316,7 @@
             <rect>
              <x>10</x>
              <y>20</y>
-             <width>69</width>
+             <width>91</width>
              <height>22</height>
             </rect>
            </property>
@@ -327,7 +327,17 @@
            </item>
            <item>
             <property name="text">
-             <string>ver.2</string>
+             <string>Normalized Convolution</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Interpolated Convolution</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Recursive Filtering</string>
             </property>
            </item>
           </widget>

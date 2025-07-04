@@ -4,12 +4,20 @@ bool DomainTransformFilter(cv::Mat _src, cv::Mat& _dst, int _sigma_s, double _si
 {
 	switch (_mode)
 	{
-	case DOMAIN_TRANSFORM_V1:
+	case VERSION_1:
 		return SpatialEdgePreservingFilter_v1(_src, _dst, _sigma_s, _sigma_r, _num_iterations);
 		break;
 
-	case DOMAIN_TRANSFORM_V2:
-		return SpatialEdgePreservingFilter_v2(_src, _dst, _sigma_s, _sigma_r, _num_iterations);
+	case NORMALIZED_CONVOLUTION:
+		return SpatialEdgePreservingFilter_v2(_src, _dst, _sigma_s, _sigma_r, _num_iterations, NORMALIZED_CONVOLUTION);
+		break;
+
+	case INTERPOLATED_CONVOLUTION:
+		return SpatialEdgePreservingFilter_v2(_src, _dst, _sigma_s, _sigma_r, _num_iterations, INTERPOLATED_CONVOLUTION);
+		break;
+
+	case RECURSIVE_FILTER:
+		return SpatialEdgePreservingFilter_v2(_src, _dst, _sigma_s, _sigma_r, _num_iterations, RECURSIVE_FILTER);
 		break;
 	}
 
@@ -383,10 +391,80 @@ void NormalizedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _box_
 	}
 }
 
-bool SpatialEdgePreservingFilter_v2(cv::Mat _src, cv::Mat& _dst, int _sigma_s, double _sigma_r, int _num_iterations)
+
+void InterpolatedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _box_radius)
+{
+	// x 방향 Interpolated Convolution
+	// _src: cv::MAt_<float>
+
+	cv::Mat x_lower, x_upper;
+	x_lower = _ct - _box_radius;
+	x_upper = _ct + _box_radius;
+
+	cv::Mat x_lower_idx, x_upper_idx;
+	x_lower_idx = cv::Mat::zeros(_src.size(), CV_32S);
+	x_upper_idx = cv::Mat::zeros(_src.size(), CV_32S);
+
+	cv::Mat ct_row;
+	#pragma omp parallel for collapse(2)
+	for (int r = 0; r < _src.rows; r++)
+	{
+		ct_row = _ct.row(r);
+		for (int c = 0; c < _src.cols; c++)
+		{
+			x_lower_idx.at<int>(r, c) = FindLargerMin(ct_row, x_lower.at<float>(r, c), c == 0 ? 0 : x_lower_idx.at<int>(r, c - 1), c);
+			x_upper_idx.at<int>(r, c) = FindLargerMin(ct_row, x_upper.at<float>(r, c), c == 0 ? 0 : x_upper_idx.at<int>(r, c - 1), ct_row.cols - 1);
+		}
+	}
+
+	cv::Mat accumulated_src;
+	_src.copyTo(accumulated_src);
+	#pragma omp parallel for
+	for (int r = 0; r < _src.rows; r++)
+	{
+		for (int c = 1; c < _src.cols; c++)
+		{
+			accumulated_src.at<float>(r, c) += accumulated_src.at<float>(r, c - 1);
+		}
+	}
+
+	accumulated_src.copyTo(_dst);
+	int x_lower_idx_val, x_upper_idx_val;
+	#pragma omp parallel for collapse(2)
+	for (int r = 0; r < _src.rows; r++)
+	{
+		for (int c = 0; c < _src.cols; c++)
+		{
+			x_lower_idx_val = x_lower_idx.at<int>(r, c) = x_lower_idx.at<int>(r, c) - 1;
+			x_upper_idx_val = x_upper_idx.at<int>(r, c) == _src.cols - 1 ? _src.cols - 1 : x_upper_idx.at<int>(r, c) - 1;
+
+			if (x_lower_idx_val != x_upper_idx_val)
+			{
+				if (x_lower_idx_val < 0)
+				{
+					_dst.at<float>(r, c) = (accumulated_src.at<float>(r, x_upper_idx_val) - 0)
+						/ (x_upper_idx_val - x_lower_idx_val);
+				}
+				else
+				{
+					_dst.at<float>(r, c) = (accumulated_src.at<float>(r, x_upper_idx_val) - accumulated_src.at<float>(r, x_lower_idx_val))
+						/ (x_upper_idx_val - x_lower_idx_val);
+				}
+			}
+		}
+	}
+}
+
+
+bool SpatialEdgePreservingFilter_v2(cv::Mat _src, cv::Mat& _dst, int _sigma_s, double _sigma_r, int _num_iterations, DOMAIN_TRANSFORM_MODE _mode)
 {
 	// _sigma_s와 _sigma_r을 합쳐서 하나의 파라미터로 만들어도 될 것 같음. 추후 검토
 	TIMER();
+
+	if (_mode == VERSION_1)
+	{
+		return false;
+	}
 
 	if (_src.empty() || _src.channels() > 1)
 	{
@@ -407,9 +485,31 @@ bool SpatialEdgePreservingFilter_v2(cv::Mat _src, cv::Mat& _dst, int _sigma_s, d
 		sigma_H_i = GetSigmaH(sigma_H, _num_iterations, iter);
 		box_radius = sqrt(3) * sigma_H_i;
 
-		NormalizedConvolution(src_float, src_float, ct_x, box_radius);
-		NormalizedConvolution(src_float.t(), src_float, ct_y, box_radius);
-		cv::transpose(src_float, src_float);
+		if (_mode == NORMALIZED_CONVOLUTION)
+		{
+			NormalizedConvolution(src_float, src_float, ct_x, box_radius);
+			NormalizedConvolution(src_float.t(), src_float, ct_y, box_radius);
+			cv::transpose(src_float, src_float);
+		}
+		else if (_mode == INTERPOLATED_CONVOLUTION)
+		{
+			OutputDebugString(L"Interpolated Convolution is not implemented yet.");
+			return false;
+
+			//InterpolatedConvolution(src_float, src_float, ct_x, box_radius);
+			//InterpolatedConvolution(src_float.t(), src_float, ct_y, box_radius);
+			//cv::transpose(src_float, src_float);
+		}
+		else if (_mode == RECURSIVE_FILTER)
+		{
+			OutputDebugString(L"Recursive Filter is not implemented yet.");
+			return false;
+		}
+		else
+		{
+			OutputDebugString(L"Unsupported Domain Transform Mode for Spatial Edge Preserving Filter.");
+			return false;
+		}
 	}
 
 	src_float.convertTo(_dst, _src.type());
