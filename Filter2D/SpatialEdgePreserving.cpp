@@ -286,7 +286,7 @@ void DomainTransform(cv::Mat _src, cv::Mat& _ct, float _sigma_s, float _sigma_r)
 
 int FindLargerMin(cv::Mat _row, float _target, int _offset_min, int _offset_max)
 {
-	// 1차원 행렬에서 _target보다 큰 값 중 가장 작은 값의 인덱스를 0과 _offset 사이에서 찾음
+	// 1차원 행렬 _row에서 _target보다 큰 값 중 가장 작은 값의 인덱스를 0과 _offset 사이에서 찾음
 
 	if (_offset_min == -1)
 	{
@@ -371,7 +371,7 @@ void NormalizedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _box_
 	{
 		for (int c = 0; c < _src.cols; c++)
 		{
-			x_lower_idx_val = x_lower_idx.at<int>(r, c) = x_lower_idx.at<int>(r, c) - 1;
+			x_lower_idx_val = x_lower_idx.at<int>(r, c) - 1;
 			x_upper_idx_val = x_upper_idx.at<int>(r, c) == _src.cols - 1 ? _src.cols - 1 : x_upper_idx.at<int>(r, c) - 1;
 
 			if (x_lower_idx_val != x_upper_idx_val)
@@ -417,38 +417,44 @@ void InterpolatedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _bo
 		}
 	}
 
-	cv::Mat accumulated_src;
-	_src.copyTo(accumulated_src);
-	#pragma omp parallel for
+	cv::Mat areas;
+	_src.copyTo(areas);
 	for (int r = 0; r < _src.rows; r++)
 	{
 		for (int c = 1; c < _src.cols; c++)
 		{
-			accumulated_src.at<float>(r, c) += accumulated_src.at<float>(r, c - 1);
+			areas.at<float>(r, c) = (_src.at<float>(r, c) + _src.at<float>(r, c - 1)) * (_ct.at<float>(r, c) - _ct.at<float>(r, c - 1)) * 0.5f;
 		}
 	}
 
-	accumulated_src.copyTo(_dst);
+	cv::Mat accumulated_area;
+	areas.copyTo(accumulated_area);
+	for (int r = 0; r < _src.rows; r++)
+	{
+		for (int c = 1; c < _src.cols; c++)
+		{
+			accumulated_area.at<float>(r, c) += accumulated_area.at<float>(r, c - 1);
+		}
+	}
+
+	accumulated_area.copyTo(_dst);
 	int x_lower_idx_val, x_upper_idx_val;
-	#pragma omp parallel for collapse(2)
 	for (int r = 0; r < _src.rows; r++)
 	{
 		for (int c = 0; c < _src.cols; c++)
 		{
-			x_lower_idx_val = x_lower_idx.at<int>(r, c) = x_lower_idx.at<int>(r, c) - 1;
+			x_lower_idx_val = x_lower_idx.at<int>(r, c) - 1;
 			x_upper_idx_val = x_upper_idx.at<int>(r, c) == _src.cols - 1 ? _src.cols - 1 : x_upper_idx.at<int>(r, c) - 1;
 
 			if (x_lower_idx_val != x_upper_idx_val)
 			{
 				if (x_lower_idx_val < 0)
 				{
-					_dst.at<float>(r, c) = (accumulated_src.at<float>(r, x_upper_idx_val) - 0)
-						/ (x_upper_idx_val - x_lower_idx_val);
+					_dst.at<float>(r, c) = (accumulated_area.at<float>(r, x_upper_idx_val) - 0) / (2 * _box_radius);
 				}
 				else
 				{
-					_dst.at<float>(r, c) = (accumulated_src.at<float>(r, x_upper_idx_val) - accumulated_src.at<float>(r, x_lower_idx_val))
-						/ (x_upper_idx_val - x_lower_idx_val);
+					_dst.at<float>(r, c) = (accumulated_area.at<float>(r, x_upper_idx_val) - accumulated_area.at<float>(r, x_lower_idx_val)) / (2 * _box_radius);
 				}
 			}
 		}
@@ -493,12 +499,9 @@ bool SpatialEdgePreservingFilter_v2(cv::Mat _src, cv::Mat& _dst, int _sigma_s, d
 		}
 		else if (_mode == INTERPOLATED_CONVOLUTION)
 		{
-			OutputDebugString(L"Interpolated Convolution is not implemented yet.");
-			return false;
-
-			//InterpolatedConvolution(src_float, src_float, ct_x, box_radius);
-			//InterpolatedConvolution(src_float.t(), src_float, ct_y, box_radius);
-			//cv::transpose(src_float, src_float);
+			InterpolatedConvolution(src_float, src_float, ct_x, box_radius);
+			InterpolatedConvolution(src_float.t(), src_float, ct_y, box_radius);
+			cv::transpose(src_float, src_float);
 		}
 		else if (_mode == RECURSIVE_FILTER)
 		{
