@@ -47,7 +47,6 @@ bool TransformedDomainBoxFilter_Horizontal(cv::Mat src, cv::Mat& dst, cv::Mat ct
 
 	/***********************************************************************************************
 	* Normalized Convolution
-	* Interpolated Convolution, Recursive Filter는 추후 구현 필요
 	***********************************************************************************************/
 	cv::Mat temp = cv::Mat::zeros(src.rows, src.cols, CV_32F);
 	cv::Mat SAT = cv::Mat::zeros(src.rows, src.cols + 1, CV_32F);
@@ -292,6 +291,11 @@ int FindLargerMin(cv::Mat _row, float _target, int _offset_min, int _offset_max)
 	{
 		_offset_min = 0;
 	}
+	if (_offset_min == _row.cols)
+	{
+		return _row.cols;
+	}
+
 	if (_offset_max == -1)
 	{
 		_offset_max = _row.cols - 1;
@@ -304,7 +308,14 @@ int FindLargerMin(cv::Mat _row, float _target, int _offset_min, int _offset_max)
 	{
 		if (min == max)
 		{
-			return min;
+			if (_row.at<float>(min) > _target)
+			{
+				return min;
+			}
+			else
+			{
+				return _row.cols;
+			}
 		}
 
 		curr = min + std::round((max - min) / 2);
@@ -332,7 +343,7 @@ void NormalizedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _box_
 {
 	// x 방향 Normalized Convolution
 	// _src: cv::MAt_<float>
-
+	cv::Mat temp;
 	cv::Mat x_lower, x_upper;
 	x_lower = _ct - _box_radius;
 	x_upper = _ct + _box_radius;
@@ -364,7 +375,7 @@ void NormalizedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _box_
 		}
 	}
 
-	accumulated_src.copyTo(_dst);
+	accumulated_src.copyTo(temp);
 	int x_lower_idx_val, x_upper_idx_val;
 	#pragma omp parallel for collapse(2)
 	for (int r = 0; r < _src.rows; r++)
@@ -378,17 +389,18 @@ void NormalizedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _box_
 			{
 				if (x_lower_idx_val < 0)
 				{
-					_dst.at<float>(r, c) = (accumulated_src.at<float>(r, x_upper_idx_val) - 0)
+					temp.at<float>(r, c) = (accumulated_src.at<float>(r, x_upper_idx_val) - 0)
 						/ (x_upper_idx_val - x_lower_idx_val);
 				}
 				else
 				{
-					_dst.at<float>(r, c) = (accumulated_src.at<float>(r, x_upper_idx_val) - accumulated_src.at<float>(r, x_lower_idx_val))
+					temp.at<float>(r, c) = (accumulated_src.at<float>(r, x_upper_idx_val) - accumulated_src.at<float>(r, x_lower_idx_val))
 						/ (x_upper_idx_val - x_lower_idx_val);
 				}
 			}
 		}
 	}
+	temp.copyTo(_dst);
 }
 
 
@@ -396,7 +408,6 @@ void InterpolatedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _bo
 {
 	// x 방향 Interpolated Convolution
 	// _src: cv::MAt_<float>
-
 	cv::Mat x_lower, x_upper;
 	x_lower = _ct - _box_radius;
 	x_upper = _ct + _box_radius;
@@ -437,28 +448,64 @@ void InterpolatedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _bo
 		}
 	}
 
-	accumulated_area.copyTo(_dst);
-	int x_lower_idx_val, x_upper_idx_val;
+	cv::Mat L_mat = cv::Mat::zeros(_src.size(), CV_32F);
+	cv::Mat R_mat = cv::Mat::zeros(_src.size(), CV_32F);
+	cv::Mat C_mat = cv::Mat::zeros(_src.size(), CV_32F);
+
+	cv::Mat temp;
+	accumulated_area.copyTo(temp);
+	float alpha, yi, L, R, C;
+	int x_lower_idx_0, x_lower_idx_1, x_lower_idx_2;
+	int x_upper_idx_0, x_upper_idx_1, x_upper_idx_2;
 	for (int r = 0; r < _src.rows; r++)
 	{
 		for (int c = 0; c < _src.cols; c++)
 		{
-			x_lower_idx_val = x_lower_idx.at<int>(r, c) - 1;
-			x_upper_idx_val = x_upper_idx.at<int>(r, c) == _src.cols - 1 ? _src.cols - 1 : x_upper_idx.at<int>(r, c) - 1;
+			// 0: prev, 1: center, 2: post
+			x_lower_idx_0 = x_lower_idx.at<int>(r, c) - 1;
+			x_lower_idx_1 = x_lower_idx.at<int>(r, c);
+			x_upper_idx_1 = x_upper_idx.at<int>(r, c) - 1;
+			x_upper_idx_2 = x_upper_idx.at<int>(r, c);
+				
+			C = accumulated_area.at<float>(r, x_upper_idx_1) - accumulated_area.at<float>(r, x_lower_idx_1);
+			C_mat.at<float>(r, c) = C;
 
-			if (x_lower_idx_val != x_upper_idx_val)
+			L = 0;
+			R = 0;
+			if (x_lower_idx_0 >= 0)
 			{
-				if (x_lower_idx_val < 0)
-				{
-					_dst.at<float>(r, c) = (accumulated_area.at<float>(r, x_upper_idx_val) - 0) / (2 * _box_radius);
-				}
-				else
-				{
-					_dst.at<float>(r, c) = (accumulated_area.at<float>(r, x_upper_idx_val) - accumulated_area.at<float>(r, x_lower_idx_val)) / (2 * _box_radius);
-				}
+				alpha = (x_lower.at<float>(r, c) - _ct.at<float>(r, x_lower_idx_0)) / (_ct.at<float>(r, x_lower_idx_1) - _ct.at<float>(r, x_lower_idx_0));
+				yi = _src.at<float>(r, x_lower_idx_0) + alpha * (_src.at<float>(r, x_lower_idx_1) - _src.at<float>(r, x_lower_idx_0));
+				L = (yi + _src.at<float>(r, x_lower_idx_1)) * (1 - alpha) * (_ct.at<float>(r, x_lower_idx_1) - _ct.at<float>(r, x_lower_idx_0)) * 0.5f;
+				L_mat.at<float>(r, c) = L;
 			}
+			else
+			{
+				alpha = (x_lower.at<float>(r, c) - 0) / (_ct.at<float>(r, x_lower_idx_1) - 0);
+				yi = _src.at<float>(r, 0) + alpha * (_src.at<float>(r, x_lower_idx_1) - _src.at<float>(r, 0));
+				L = (yi + _src.at<float>(r, x_lower_idx_1)) * (1 - alpha) * (_ct.at<float>(r, x_lower_idx_1) - 0) * 0.5f;
+				L_mat.at<float>(r, c) = L;
+			}
+
+			if (x_upper_idx_2 <= _src.cols - 1)
+			{
+				alpha = (x_upper.at<float>(r, c) - _ct.at<float>(r, x_upper_idx_1)) / (_ct.at<float>(r, x_upper_idx_2) - _ct.at<float>(r, x_upper_idx_1));
+				yi = _src.at<float>(r, x_upper_idx_1) + alpha * (_src.at<float>(r, x_upper_idx_2) - _src.at<float>(r, x_upper_idx_1));
+				R = (yi + _src.at<float>(r, x_upper_idx_1)) * alpha * (_ct.at<float>(r, x_upper_idx_2) - _ct.at<float>(r, x_upper_idx_1)) * 0.5f;
+				R_mat.at<float>(r, c) = R;
+			}
+			else // 경계 조건 처리 확인 필요 (결과는 맞게 나오나 정확한 이해 추가 필요)
+			{
+				alpha = (x_upper.at<float>(r, c) - _ct.at<float>(r, x_upper_idx_1)) / (1.2 * _box_radius);	// 왜 1.2인지 확인 필요
+				yi = _src.at<float>(r, x_upper_idx_1);														// 여기 왜 Border_replicate인지 확인 필요
+				R = (yi + _src.at<float>(r, x_upper_idx_1)) * alpha * (1.2 * _box_radius) * 0.5f;
+				R_mat.at<float>(r, c) = R;
+			}
+
+			temp.at<float>(r, c) = (L + C + R) / (2 * _box_radius);
 		}
 	}
+	temp.copyTo(_dst);
 }
 
 
