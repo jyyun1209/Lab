@@ -1220,7 +1220,7 @@
     </widget>
    </item>
    <item row="1" column="0" rowspan="3" colspan="7">
-    <widget class="QGraphicsView_wheelZoom" name="graphicsView_image">
+    <widget class="QGraphicsView_Custom" name="graphicsView_image">
      <property name="minimumSize">
       <size>
        <width>580</width>
@@ -1373,9 +1373,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QGraphicsView_wheelZoom</class>
+   <class>QGraphicsView_Custom</class>
    <extends>QGraphicsView</extends>
-   <header location="global">QGraphicsView_wheelZoom.h</header>
+   <header location="global">QGraphicsView_Custom.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

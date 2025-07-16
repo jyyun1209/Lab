@@ -121,7 +121,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="QGraphicsView_wheelZoom.cpp" />
+    <ClCompile Include="QGraphicsView_Custom.cpp" />
     <ClCompile Include="QtWidgetsFilter2D.cpp" />
     <QtRcc Include="MainWindow.qrc" />
     <QtUic Include="MainWindow.ui" />
@@ -134,7 +134,7 @@
     <QtMoc Include="QtWidgetsFilter2D.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="QGraphicsView_wheelZoom.h" />
+    <ClInclude Include="QGraphicsView_Custom.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

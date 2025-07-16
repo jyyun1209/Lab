@@ -38,6 +38,7 @@ void QtWidgetsFilter2D::UpdateImageFromCV(cv::Mat _image, QGraphicsScene* _scene
 	_scene->addPixmap(pixmap);
 	_scene->setSceneRect(pixmap.rect());
 
+	ui.graphicsView_image->originalImage = qImage;
 	ui.graphicsView_image->setScene(_scene);
 	ui.graphicsView_image->show();
 
