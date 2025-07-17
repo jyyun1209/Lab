@@ -46,6 +46,14 @@ bool Subsampling(cv::Mat _src, cv::Mat& _dst, SUBSAMPLE_MODE _mode, SUBSAMPLE_IN
 		cv::resize(_src, _dst, cv::Size(), 0.25, 0.25, interpolation_flag);
 		break;
 
+	case BINNING_2X2:
+		cv::Mat kernel = (cv::Mat_<float>(2, 2) << 0.25f, 0.25f,
+												   0.25f, 0.25f);
+
+		cv::filter2D(_src, _dst, _src.depth(), kernel, cv::Point(0, 0), 0, cv::BORDER_CONSTANT);
+		cv::resize(_src, _dst, cv::Size(), 0.5, 0.5, cv::INTER_NEAREST);
+		break;
+
 	deafult:
 		_src.copyTo(_dst);
 	}
