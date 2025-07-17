@@ -161,6 +161,7 @@
     <ClInclude Include="Filter2D_Exp.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Diffusion.h" />
+    <ClInclude Include="GaussianFilter.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="MedianFilter.h" />
     <ClInclude Include="SpatialEdgePreserving.h" />
@@ -169,6 +170,7 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Diffusion.cpp" />
+    <ClCompile Include="GaussianFilter.cpp" />
     <ClCompile Include="MedianFilter.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

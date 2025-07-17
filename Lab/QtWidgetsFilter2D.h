@@ -14,6 +14,7 @@
 #include "Common/ColorMode.h"
 #include "Common/Noise.h"
 #include "Filter2D/MedianFilter.h"
+#include "Filter2D/GaussianFilter.h"
 #include "Filter2D/SpatialEdgePreserving.h"
 #include "Filter2D/Diffusion.h"
 #include "Filter2D/Subsampling.h"
@@ -74,6 +75,9 @@ public slots:
 	// Median Filter
 	void SlotCheckboxMedian_Clicked();
 	void SlotLineEditMedian_Changed();
+
+	// Gaussian Filter
+	void SlotCheckboxGaussian_Clicked();
 
 	// Spatial Edge Preserving
 	void SlotCheckboxSpatialEdgePreserving_Clicked();

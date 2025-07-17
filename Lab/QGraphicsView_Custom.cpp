@@ -9,9 +9,23 @@ void QGraphicsView_Custom::wheelEvent(QWheelEvent* event)
 {
 	setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 	double scaleFactor = 1.15;
+	int delta = 0;
 
-	//if (event->delta() > 0)			// QT 5.14.0
-	if (event->angleDelta().y() > 0)	// QT 5.15.0
+#if QT_VERSION == QT_VERSION_CHECK(5, 14, 0)
+{
+	delta = event->delta() > 0;
+}
+#elif QT_VERSION == QT_VERSION_CHECK(5, 15, 0)
+{
+	delta = event->angleDelta().y();
+}
+#else
+{
+	return; // Unsupported Qt version
+}
+#endif
+	
+	if (delta > 0)
 	{
 		scale(scaleFactor, scaleFactor);
 	}
@@ -29,24 +43,17 @@ void QGraphicsView_Custom::paintEvent(QPaintEvent* event)
 	qreal scaleX = transform.m11();
 
 	for (QGraphicsTextItem* item : overlayTexts) {
-		scene()->removeItem(item);
-		delete item;
+		if (scene() && scene()->items().contains(item))
+		{
+			scene()->removeItem(item);
+			delete item;
+		}
 	}
 	overlayTexts.clear();
 
 	if (scaleX > 50)
 	{
 		QGraphicsPixmapItem* pixmapItem = nullptr;
-		/*QImage image;
-
-		for (QGraphicsItem* item : scene()->items()) {
-			pixmapItem = qgraphicsitem_cast<QGraphicsPixmapItem*>(item);
-		}
-
-		if (pixmapItem) {
-			image = pixmapItem->pixmap().toImage();
-		}*/
-
 		QRectF visibleSceneRect = mapToScene(viewport()->rect()).boundingRect();
 
 		int xStart = std::max(0, static_cast<int>(visibleSceneRect.left()));

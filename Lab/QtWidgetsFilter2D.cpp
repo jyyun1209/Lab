@@ -42,11 +42,16 @@ void QtWidgetsFilter2D::UpdateImageFromCV(cv::Mat _image, QGraphicsScene* _scene
 	ui.graphicsView_image->setScene(_scene);
 	ui.graphicsView_image->show();
 
+	float avgIntensity_f = 0.0;
 	ui.label_ImgSize->setText(QString::number(_image.cols) + " x " + QString::number(_image.rows));
-
-	cv::Scalar avgIntensity = cv::mean(_image);
-	float avgIntensity_f = (avgIntensity[0] + avgIntensity[1] + avgIntensity[2]) / _image.channels();
 	ui.label_AvgIntensity->setText(QString::number(avgIntensity_f, 'f', 2));
+
+	if (!_image.empty())
+	{
+		cv::Scalar avgIntensity = cv::mean(_image);
+		avgIntensity_f = (avgIntensity[0] + avgIntensity[1] + avgIntensity[2]) / _image.channels();
+		ui.label_AvgIntensity->setText(QString::number(avgIntensity_f, 'f', 2));
+	}
 }
 
 void QtWidgetsFilter2D::InitializeUI()
@@ -84,6 +89,9 @@ void QtWidgetsFilter2D::InitializeUI()
 	connect(ui.groupBox_median, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
 	connect(ui.lineEdit_medianKernel, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditMedian_Changed);
 	connect(ui.comboBox_MedianMode, &QComboBox::currentTextChanged, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
+	connect(ui.groupBox_Gaussian, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxGaussian_Clicked);
+	connect(ui.lineEdit_GaussianKernel, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotCheckboxGaussian_Clicked);
+	connect(ui.lineEdit_GaussianSigma, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotCheckboxGaussian_Clicked);
 	connect(ui.groupBox_SEP, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked);
 	connect(ui.comboBox_SEP_Mode, &QComboBox::currentTextChanged, this, &QtWidgetsFilter2D::SlotComboBoxSEPMode_Changed);
 	connect(ui.lineEdit_sepSigmaS, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditSpatialEdgePreserving_Changed);
@@ -458,6 +466,21 @@ void QtWidgetsFilter2D::SlotLineEditMedian_Changed()
 	filter2DSettings->setValue("Median2DKernel", ui.lineEdit_medianKernel->text().toInt());
 }
 
+// Gaussian Filter
+void QtWidgetsFilter2D::SlotCheckboxGaussian_Clicked()
+{
+	if (ui.groupBox_Gaussian->isChecked())
+	{
+		cvImage_Display = cvImage.clone();
+		GaussianFilter(cvImage, cvImage_Display, ui.lineEdit_GaussianKernel->text().toInt(), ui.lineEdit_GaussianSigma->text().toFloat());
+		UpdateImageFromCV(cvImage_Display, scene);
+	}
+	else
+	{
+		cvImage_Display = cvImage.clone();
+		UpdateImageFromCV(cvImage, scene);
+	}
+}
 
 // Spatial Edge Preserving
 void QtWidgetsFilter2D::SlotCheckboxSpatialEdgePreserving_Clicked()
