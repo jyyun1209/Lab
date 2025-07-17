@@ -16,6 +16,7 @@
 #include "Filter2D/MedianFilter.h"
 #include "Filter2D/SpatialEdgePreserving.h"
 #include "Filter2D/Diffusion.h"
+#include "Filter2D/Subsampling.h"
 #include "Reconstruction/ReconstructionCore.h"
 
 class QtWidgetsFilter2D : public QWidget
@@ -64,6 +65,7 @@ public slots:
 	void SlotSliderR_Changed();
 	void SlotSliderG_Changed();
 	void SlotSliderB_Changed();
+	void SlotCheckBoxSubsampling_Clicked();
 
 	// ---------------------------------------------------
 	// Filters

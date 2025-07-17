@@ -121,7 +121,7 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
@@ -1214,6 +1214,82 @@
           </widget>
          </item>
         </layout>
+       </widget>
+       <widget class="QComboBox" name="comboBox_SubsamplingMode">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>320</y>
+          <width>69</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <item>
+         <property name="text">
+          <string>Sub_2x2</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sub_2x2 (Gaussian)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sub_4x4</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sub_4x4 (Gaussian)</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QCheckBox" name="checkBox_Subsampling">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>320</y>
+          <width>91</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Subsampling</string>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="comboBox_SubsamplingInterpolationMode">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>350</y>
+          <width>69</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <item>
+         <property name="text">
+          <string>Nearest</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Linear</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Area</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Cubic</string>
+         </property>
+        </item>
        </widget>
       </widget>
      </widget>

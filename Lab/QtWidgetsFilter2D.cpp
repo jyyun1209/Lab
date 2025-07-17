@@ -77,6 +77,9 @@ void QtWidgetsFilter2D::InitializeUI()
 	connect(ui.horizontalSlider_R, &QSlider::valueChanged, this, &QtWidgetsFilter2D::SlotSliderR_Changed);
 	connect(ui.horizontalSlider_G, &QSlider::valueChanged, this, &QtWidgetsFilter2D::SlotSliderG_Changed);
 	connect(ui.horizontalSlider_B, &QSlider::valueChanged, this, &QtWidgetsFilter2D::SlotSliderB_Changed);
+	connect(ui.checkBox_Subsampling, &QCheckBox::clicked, this, &QtWidgetsFilter2D::SlotCheckBoxSubsampling_Clicked);
+	connect(ui.comboBox_SubsamplingMode, &QComboBox::currentTextChanged, this, &QtWidgetsFilter2D::SlotCheckBoxSubsampling_Clicked);
+	connect(ui.comboBox_SubsamplingInterpolationMode, &QComboBox::currentTextChanged, this, &QtWidgetsFilter2D::SlotCheckBoxSubsampling_Clicked);
 
 	connect(ui.groupBox_median, &QGroupBox::clicked, this, &QtWidgetsFilter2D::SlotCheckboxMedian_Clicked);
 	connect(ui.lineEdit_medianKernel, &QLineEdit::editingFinished, this, &QtWidgetsFilter2D::SlotLineEditMedian_Changed);
@@ -414,6 +417,21 @@ void QtWidgetsFilter2D::SlotSliderB_Changed()
 	if (ui.checkBox_RGBGain->isChecked())
 	{
 		SlotCheckBoxRGBGain_Clicked();
+	}
+}
+
+void QtWidgetsFilter2D::SlotCheckBoxSubsampling_Clicked()
+{
+	if (ui.checkBox_Subsampling->isChecked())
+	{
+		cvImage_Display = cvImage.clone();
+		Subsampling(cvImage_Display, cvImage_Display, SUBSAMPLE_MODE(ui.comboBox_SubsamplingMode->currentIndex()), SUBSAMPLE_INTERPOLATION_MODE(ui.comboBox_SubsamplingInterpolationMode->currentIndex()));
+		UpdateImageFromCV(cvImage_Display, scene);
+	}
+	else
+	{
+		cvImage_Display = cvImage.clone();
+		UpdateImageFromCV(cvImage, scene);
 	}
 }
 

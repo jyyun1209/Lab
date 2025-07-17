@@ -164,6 +164,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="MedianFilter.h" />
     <ClInclude Include="SpatialEdgePreserving.h" />
+    <ClInclude Include="Subsampling.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -176,6 +177,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SpatialEdgePreserving.cpp" />
+    <ClCompile Include="Subsampling.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="cuda_common.cuh" />
