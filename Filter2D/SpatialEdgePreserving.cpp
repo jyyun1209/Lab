@@ -261,7 +261,7 @@ float GetSigmaH(float _sigma_H, int _num_iterations, int _curr_iteration)
 	return _sigma_H * sqrt(3) * (pow(2, _num_iterations - (_curr_iteration + 1)) / sqrt(pow(4, _num_iterations) - 1));
 }
 
-void DomainTransform(cv::Mat _src, cv::Mat& _ct, float _sigma_s, float _sigma_r)
+void DomainTransform(cv::Mat _src, cv::Mat& _ct, float _sigma_s, float _sigma_r, int _cum)
 {
 	// Domain Transform
 	cv::Mat src_float;
@@ -273,12 +273,16 @@ void DomainTransform(cv::Mat _src, cv::Mat& _ct, float _sigma_s, float _sigma_r)
 	Diff_Partial_X(src_float, dI_dx, DIFF_PARTIAL_OPENCV, DIFF_DIRECTION_RIGHT);
 
 	_ct = 1 + (_sigma_s / _sigma_r) * cv::abs(dI_dx);
-	for (int c = 1; c < src_float.cols; c++)
+
+	if (_cum == 1)
 	{
-		#pragma omp parallel for
-		for (int r = 0; r < src_float.rows; r++)
+		for (int c = 1; c < src_float.cols; c++)
 		{
-			_ct.at<float>(r, c) = _ct.at<float>(r, c) + _ct.at<float>(r, c - 1);
+			#pragma omp parallel for
+			for (int r = 0; r < src_float.rows; r++)
+			{
+				_ct.at<float>(r, c) = _ct.at<float>(r, c) + _ct.at<float>(r, c - 1);
+			}
 		}
 	}
 }
@@ -508,6 +512,37 @@ void InterpolatedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _bo
 	temp.copyTo(_dst);
 }
 
+void RecursiveFilter(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _sigma)
+{
+	// Recursive Filtering
+	// _src: cv::MAt_<float>
+
+	float a = exp(-sqrt(2) / _sigma);
+	float d = 0;
+
+	cv::Mat temp = cv::Mat::zeros(_src.size(), CV_32F);
+	for (int r = 0; r < _src.rows; r++)
+	{
+		temp.at<float>(r, 0) = _src.at<float>(r, 0);
+		for (int c = 1; c < _src.cols; c++)
+		{
+			d = _ct.at<float>(r, c);
+			temp.at<float>(r, c) = _src.at<float>(r, c) + pow(a, d) * (temp.at<float>(r, c - 1) - _src.at<float>(r, c));
+		}
+	}
+
+	for (int r = 0; r < _src.rows; r++)
+	{
+		for (int c = _src.cols - 2; c >= 0; c--)
+		{
+			d = _ct.at<float>(r, c + 1);
+			temp.at<float>(r, c) = temp.at<float>(r, c) + pow(a, d) * (temp.at<float>(r, c + 1) - temp.at<float>(r, c));
+		}
+	}
+
+	temp.copyTo(_dst);
+}
+
 
 bool SpatialEdgePreservingFilter_v2(cv::Mat _src, cv::Mat& _dst, int _sigma_s, double _sigma_r, int _num_iterations, DOMAIN_TRANSFORM_MODE _mode)
 {
@@ -526,8 +561,15 @@ bool SpatialEdgePreservingFilter_v2(cv::Mat _src, cv::Mat& _dst, int _sigma_s, d
 	}
 
 	cv::Mat ct_x, ct_y;
-	DomainTransform(_src, ct_x, _sigma_s, _sigma_r);
-	DomainTransform(_src.t(), ct_y, _sigma_s, _sigma_r);
+	int cum_flag = 1;
+
+	if (_mode == RECURSIVE_FILTER)
+	{
+		cum_flag = 0;
+	}
+
+	DomainTransform(_src, ct_x, _sigma_s, _sigma_r, cum_flag);
+	DomainTransform(_src.t(), ct_y, _sigma_s, _sigma_r, cum_flag);
 
 	cv::Mat src_float;
 	_src.convertTo(src_float, CV_32F);
@@ -552,8 +594,9 @@ bool SpatialEdgePreservingFilter_v2(cv::Mat _src, cv::Mat& _dst, int _sigma_s, d
 		}
 		else if (_mode == RECURSIVE_FILTER)
 		{
-			OutputDebugString(L"Recursive Filter is not implemented yet.");
-			return false;
+			RecursiveFilter(src_float, src_float, ct_x, sigma_H_i);
+			RecursiveFilter(src_float.t(), src_float, ct_y, sigma_H_i);
+			cv::transpose(src_float, src_float);
 		}
 		else
 		{
