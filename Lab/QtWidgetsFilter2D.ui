@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>858</width>
-    <height>655</height>
+    <width>1202</width>
+    <height>658</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,8 +26,43 @@
    <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0" rowspan="3" colspan="7">
-    <widget class="QGraphicsView_wheelZoom" name="graphicsView_image">
+   <item row="0" column="0">
+    <widget class="QPushButton" name="pushButton_imagePath">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>80</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="baseSize">
+      <size>
+       <width>80</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Select Image</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="7">
+    <widget class="QLineEdit" name="lineEdit_imagePath">
+     <property name="minimumSize">
+      <size>
+       <width>600</width>
+       <height>25</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" rowspan="2" colspan="7">
+    <widget class="QGraphicsView_Custom" name="graphicsView_image">
      <property name="minimumSize">
       <size>
        <width>580</width>
@@ -66,151 +101,112 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QPushButton" name="pushButton_imagePath">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>80</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="baseSize">
-      <size>
-       <width>80</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Select Image</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" colspan="7">
-    <widget class="QLineEdit" name="lineEdit_imagePath">
-     <property name="minimumSize">
-      <size>
-       <width>600</width>
-       <height>25</height>
-      </size>
-     </property>
-    </widget>
+   <item row="1" column="7">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButton_fitZoom">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>70</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Fit Zoom</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_Retrieve">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>70</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Retrieve</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_save">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>70</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Save</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox_extension">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>70</width>
+         <height>0</height>
+        </size>
+       </property>
+       <item>
+        <property name="text">
+         <string>.png</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>.jpg</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>.tif</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item row="2" column="7">
-    <widget class="QPushButton" name="pushButton_save">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>70</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Save</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="4">
-    <widget class="QLabel" name="label_ImgSize">
-     <property name="minimumSize">
-      <size>
-       <width>50</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="8">
-    <widget class="QComboBox" name="comboBox_extension">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>70</width>
-       <height>0</height>
-      </size>
-     </property>
-     <item>
-      <property name="text">
-       <string>.png</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>.jpg</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>.tif</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="1" column="8">
-    <widget class="QPushButton" name="pushButton_Retrieve">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>70</width>
-       <height>24</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Retrieve</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="3">
-    <widget class="QLabel" name="label_8">
-     <property name="text">
-      <string>Img Size:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="5">
-    <widget class="QLabel" name="label_7">
-     <property name="text">
-      <string>Avg. Intensity:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="2">
-    <spacer name="horizontalSpacer">
+    <spacer name="verticalSpacer">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>28</width>
-       <height>20</height>
+       <width>20</width>
+       <height>456</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="3" column="0" colspan="2">
     <widget class="QLabel" name="label_5">
      <property name="sizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
@@ -223,26 +219,47 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="7">
-    <widget class="QPushButton" name="pushButton_fitZoom">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+   <item row="3" column="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="minimumSize">
+     <property name="sizeHint" stdset="0">
       <size>
-       <width>70</width>
-       <height>24</height>
+       <width>28</width>
+       <height>20</height>
       </size>
      </property>
+    </spacer>
+   </item>
+   <item row="3" column="3">
+    <widget class="QLabel" name="label_8">
      <property name="text">
-      <string>Fit Zoom</string>
+      <string>Img Size:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="6">
+   <item row="3" column="4">
+    <widget class="QLabel" name="label_ImgSize">
+     <property name="minimumSize">
+      <size>
+       <width>50</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="5">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Avg. Intensity:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="6">
     <widget class="QLabel" name="label_AvgIntensity">
      <property name="minimumSize">
       <size>
@@ -255,7 +272,23 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="7" colspan="3">
+   <item row="3" column="7">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>70</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="8" rowspan="4">
     <widget class="QTabWidget" name="tabWidget">
      <property name="minimumSize">
       <size>
@@ -368,7 +401,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>110</y>
+            <y>220</y>
             <width>180</width>
             <height>131</height>
            </rect>
@@ -386,7 +419,7 @@
            <property name="geometry">
             <rect>
              <x>70</x>
-             <y>30</y>
+             <y>60</y>
              <width>81</width>
              <height>20</height>
             </rect>
@@ -399,7 +432,7 @@
            <property name="geometry">
             <rect>
              <x>8</x>
-             <y>30</y>
+             <y>60</y>
              <width>56</width>
              <height>12</height>
             </rect>
@@ -412,7 +445,7 @@
            <property name="geometry">
             <rect>
              <x>8</x>
-             <y>100</y>
+             <y>110</y>
              <width>56</width>
              <height>12</height>
             </rect>
@@ -425,7 +458,7 @@
            <property name="geometry">
             <rect>
              <x>70</x>
-             <y>100</y>
+             <y>110</y>
              <width>81</width>
              <height>20</height>
             </rect>
@@ -438,7 +471,7 @@
            <property name="geometry">
             <rect>
              <x>8</x>
-             <y>60</y>
+             <y>90</y>
              <width>56</width>
              <height>12</height>
             </rect>
@@ -451,7 +484,7 @@
            <property name="geometry">
             <rect>
              <x>70</x>
-             <y>60</y>
+             <y>90</y>
              <width>81</width>
              <height>20</height>
             </rect>
@@ -460,12 +493,42 @@
             <string>0.1</string>
            </property>
           </widget>
+          <widget class="QComboBox" name="comboBox_SEP_Mode">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>20</y>
+             <width>91</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>ver.1</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Normalized Convolution</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Interpolated Convolution</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Recursive Filtering</string>
+            </property>
+           </item>
+          </widget>
          </widget>
          <widget class="QGroupBox" name="groupBox_heatEquation">
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>250</y>
+            <y>360</y>
             <width>180</width>
             <height>101</height>
            </rect>
@@ -481,7 +544,7 @@
           </property>
           <widget class="QSlider" name="horizontalSlider_alpha">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="geometry">
             <rect>
@@ -512,7 +575,7 @@
           </widget>
           <widget class="QLabel" name="label_alpha">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="geometry">
             <rect>
@@ -528,7 +591,7 @@
           </widget>
           <widget class="QLineEdit" name="lineEdit_alpha">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="geometry">
             <rect>
@@ -544,7 +607,7 @@
           </widget>
           <widget class="QLabel" name="label_iteration">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="geometry">
             <rect>
@@ -560,7 +623,7 @@
           </widget>
           <widget class="QSlider" name="horizontalSlider_iteration">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="geometry">
             <rect>
@@ -579,7 +642,7 @@
           </widget>
           <widget class="QLineEdit" name="lineEdit_iteration">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="geometry">
             <rect>
@@ -598,7 +661,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>360</y>
+            <y>470</y>
             <width>181</width>
             <height>111</height>
            </rect>
@@ -614,7 +677,7 @@
           </property>
           <widget class="QLabel" name="label_iteration_AD">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="geometry">
             <rect>
@@ -630,7 +693,7 @@
           </widget>
           <widget class="QSlider" name="horizontalSlider_k">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="geometry">
             <rect>
@@ -661,7 +724,7 @@
           </widget>
           <widget class="QLabel" name="label_k">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="geometry">
             <rect>
@@ -677,7 +740,7 @@
           </widget>
           <widget class="QSlider" name="horizontalSlider_iteration_AD">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="geometry">
             <rect>
@@ -696,7 +759,7 @@
           </widget>
           <widget class="QLineEdit" name="lineEdit_k">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="geometry">
             <rect>
@@ -712,7 +775,7 @@
           </widget>
           <widget class="QLineEdit" name="lineEdit_iteration_AD">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="geometry">
             <rect>
@@ -728,7 +791,7 @@
           </widget>
           <widget class="QComboBox" name="comboBox_AnisotropicDiffusionMode">
            <property name="enabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="geometry">
             <rect>
@@ -753,6 +816,77 @@
              <string>C++ (ver.2)</string>
             </property>
            </item>
+          </widget>
+         </widget>
+         <widget class="QGroupBox" name="groupBox_Gaussian">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>100</y>
+            <width>180</width>
+            <height>71</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>Gaussian</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <widget class="QLineEdit" name="lineEdit_GaussianKernel">
+           <property name="geometry">
+            <rect>
+             <x>72</x>
+             <y>20</y>
+             <width>81</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>3</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_11">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>20</y>
+             <width>56</width>
+             <height>12</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Kernel</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_12">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>50</y>
+             <width>56</width>
+             <height>12</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Sigma</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_GaussianSigma">
+           <property name="geometry">
+            <rect>
+             <x>70</x>
+             <y>50</y>
+             <width>81</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>1.0</string>
+           </property>
           </widget>
          </widget>
         </widget>
@@ -1274,7 +1408,7 @@
          <double>0.010000000000000</double>
         </property>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -1334,6 +1468,87 @@
          </item>
         </layout>
        </widget>
+       <widget class="QComboBox" name="comboBox_SubsamplingMode">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>320</y>
+          <width>69</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <item>
+         <property name="text">
+          <string>Sub_2x2</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sub_2x2 (Gaussian)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sub_4x4</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sub_4x4 (Gaussian)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Binning_2x2</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QCheckBox" name="checkBox_Subsampling">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>320</y>
+          <width>91</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Subsampling</string>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="comboBox_SubsamplingInterpolationMode">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>350</y>
+          <width>69</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <item>
+         <property name="text">
+          <string>Nearest</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Linear</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Area</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Cubic</string>
+         </property>
+        </item>
+       </widget>
       </widget>
      </widget>
     </widget>
@@ -1343,9 +1558,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QGraphicsView_wheelZoom</class>
+   <class>QGraphicsView_Custom</class>
    <extends>QGraphicsView</extends>
-   <header location="global">QGraphicsView_wheelZoom.h</header>
+   <header location="global">QGraphicsView_Custom.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

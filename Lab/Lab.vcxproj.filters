@@ -43,7 +43,7 @@
     <ClCompile Include="QtWidgetsFilter2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="QGraphicsView_wheelZoom.cpp">
+    <ClCompile Include="QGraphicsView_Custom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -58,7 +58,7 @@
     </QtUic>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="QGraphicsView_wheelZoom.h">
+    <ClInclude Include="QGraphicsView_Custom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

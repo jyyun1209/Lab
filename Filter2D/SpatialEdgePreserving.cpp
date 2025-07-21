@@ -1,5 +1,29 @@
 #include "SpatialEdgePreserving.h"
 
+bool DomainTransformFilter(cv::Mat _src, cv::Mat& _dst, int _sigma_s, double _sigma_r, int _num_iterations, DOMAIN_TRANSFORM_MODE _mode)
+{
+	switch (_mode)
+	{
+	case VERSION_1:
+		return SpatialEdgePreservingFilter_v1(_src, _dst, _sigma_s, _sigma_r, _num_iterations);
+		break;
+
+	case NORMALIZED_CONVOLUTION:
+		return SpatialEdgePreservingFilter_v2(_src, _dst, _sigma_s, _sigma_r, _num_iterations, NORMALIZED_CONVOLUTION);
+		break;
+
+	case INTERPOLATED_CONVOLUTION:
+		return SpatialEdgePreservingFilter_v2(_src, _dst, _sigma_s, _sigma_r, _num_iterations, INTERPOLATED_CONVOLUTION);
+		break;
+
+	case RECURSIVE_FILTER:
+		return SpatialEdgePreservingFilter_v2(_src, _dst, _sigma_s, _sigma_r, _num_iterations, RECURSIVE_FILTER);
+		break;
+	}
+
+	return false;
+}
+
 int largerMin(cv::Mat src, float value, int offset)
 {
 	// 1차원 행렬만 가능
@@ -14,16 +38,15 @@ int largerMin(cv::Mat src, float value, int offset)
 	return 0;
 }
 
-bool TransformedDomainBoxFilter_Horizontal(cv::Mat src, cv::Mat dst, cv::Mat ct, double box_radius)
+bool TransformedDomainBoxFilter_Horizontal(cv::Mat src, cv::Mat& dst, cv::Mat ct, double box_radius)
 {
-	TIMER();
+	//TIMER();
 
 	std::chrono::steady_clock::time_point start, end;
 	std::chrono::duration<double, std::milli> elapsed;
 
 	/***********************************************************************************************
 	* Normalized Convolution
-	* Interpolated Convolution, Recursive Filter는 추후 구현 필요
 	***********************************************************************************************/
 	cv::Mat temp = cv::Mat::zeros(src.rows, src.cols, CV_32F);
 	cv::Mat SAT = cv::Mat::zeros(src.rows, src.cols + 1, CV_32F);
@@ -92,7 +115,7 @@ bool TransformedDomainBoxFilter_Horizontal(cv::Mat src, cv::Mat dst, cv::Mat ct,
 	return true;
 }
 
-bool SpatialEdgePreservingFilter(cv::Mat _src, cv::Mat & _dst, int _sigma_s, double _sigma_r, int _num_iterations)
+bool SpatialEdgePreservingFilter_v1(cv::Mat _src, cv::Mat & _dst, int _sigma_s, double _sigma_r, int _num_iterations)
 {
 	TIMER();
 	//TIMER_CUDA();
@@ -213,7 +236,6 @@ bool SpatialEdgePreservingFilter(cv::Mat _src, cv::Mat & _dst, int _sigma_s, dou
 	}
 
 	src_temp = src_temp * (max - min) + min;
-	//src_temp = src_temp * (max - min + 1);
 
 	#pragma omp parallel for collapse (2)
 	for (int i = 0; i < src_temp.rows; i++)
@@ -229,6 +251,361 @@ bool SpatialEdgePreservingFilter(cv::Mat _src, cv::Mat & _dst, int _sigma_s, dou
 
 	src_temp.convertTo(src_temp, _src.type());
 	src_temp.copyTo(_dst);
+
+	return true;
+}
+
+
+float GetSigmaH(float _sigma_H, int _num_iterations, int _curr_iteration)
+{
+	return _sigma_H * sqrt(3) * (pow(2, _num_iterations - (_curr_iteration + 1)) / sqrt(pow(4, _num_iterations) - 1));
+}
+
+void DomainTransform(cv::Mat _src, cv::Mat& _ct, float _sigma_s, float _sigma_r, int _cum)
+{
+	// Domain Transform
+	cv::Mat src_float;
+	_src.convertTo(src_float, CV_32F);
+
+	cv::normalize(src_float, src_float, 0, 1, cv::NORM_MINMAX); // 정규화하지 않으면 누적합 계산 시, 값이 너무 커져서 최대 범위를 넘어감
+
+	cv::Mat dI_dx;
+	Diff_Partial_X(src_float, dI_dx, DIFF_PARTIAL_OPENCV, DIFF_DIRECTION_RIGHT);
+
+	_ct = 1 + (_sigma_s / _sigma_r) * cv::abs(dI_dx);
+
+	if (_cum == 1)
+	{
+		for (int c = 1; c < src_float.cols; c++)
+		{
+			#pragma omp parallel for
+			for (int r = 0; r < src_float.rows; r++)
+			{
+				_ct.at<float>(r, c) = _ct.at<float>(r, c) + _ct.at<float>(r, c - 1);
+			}
+		}
+	}
+}
+
+int FindLargerMin(cv::Mat _row, float _target, int _offset_min, int _offset_max)
+{
+	// 1차원 행렬 _row에서 _target보다 큰 값 중 가장 작은 값의 인덱스를 0과 _offset 사이에서 찾음
+
+	if (_offset_min == -1)
+	{
+		_offset_min = 0;
+	}
+	if (_offset_min == _row.cols)
+	{
+		return _row.cols;
+	}
+
+	if (_offset_max == -1)
+	{
+		_offset_max = _row.cols - 1;
+	}
+
+	int min = _offset_min;
+	int max = _offset_max;
+	int curr;
+	while (true)
+	{
+		if (min == max)
+		{
+			if (_row.at<float>(min) > _target)
+			{
+				return min;
+			}
+			else
+			{
+				return _row.cols;
+			}
+		}
+
+		curr = min + std::round((max - min) / 2);
+		if (_row.at<float>(curr) > _target)
+		{
+			if (curr == 0 || _row.at<float>(curr - 1) <= _target)
+			{
+				return curr;
+			}
+			else
+			{
+				max = curr - 1;
+			}
+		}
+		else
+		{
+			min = curr + 1;
+		}
+	}
+
+	return 0;
+}
+
+void NormalizedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _box_radius)
+{
+	// x 방향 Normalized Convolution
+	// _src: cv::MAt_<float>
+	cv::Mat temp;
+	cv::Mat x_lower, x_upper;
+	x_lower = _ct - _box_radius;
+	x_upper = _ct + _box_radius;
+
+	cv::Mat x_lower_idx, x_upper_idx;
+	x_lower_idx = cv::Mat::zeros(_src.size(), CV_32S);
+	x_upper_idx = cv::Mat::zeros(_src.size(), CV_32S);
+
+	cv::Mat ct_row;
+	#pragma omp parallel for collapse(2)
+	for (int r = 0; r < _src.rows; r++)
+	{
+		ct_row = _ct.row(r);
+		for (int c = 0; c < _src.cols; c++)
+		{
+			x_lower_idx.at<int>(r, c) = FindLargerMin(ct_row, x_lower.at<float>(r, c), c == 0 ? 0 : x_lower_idx.at<int>(r, c - 1), c);
+			x_upper_idx.at<int>(r, c) = FindLargerMin(ct_row, x_upper.at<float>(r, c), c == 0 ? 0 : x_upper_idx.at<int>(r, c - 1), ct_row.cols - 1);
+		}
+	}
+
+	cv::Mat accumulated_src;
+	_src.copyTo(accumulated_src);
+	#pragma omp parallel for
+	for (int r = 0; r < _src.rows; r++)
+	{
+		for (int c = 1; c < _src.cols; c++)
+		{
+			accumulated_src.at<float>(r, c) += accumulated_src.at<float>(r, c - 1);
+		}
+	}
+
+	accumulated_src.copyTo(temp);
+	int x_lower_idx_val, x_upper_idx_val;
+	#pragma omp parallel for collapse(2)
+	for (int r = 0; r < _src.rows; r++)
+	{
+		for (int c = 0; c < _src.cols; c++)
+		{
+			x_lower_idx_val = x_lower_idx.at<int>(r, c) - 1;
+			x_upper_idx_val = x_upper_idx.at<int>(r, c) == _src.cols - 1 ? _src.cols - 1 : x_upper_idx.at<int>(r, c) - 1;
+
+			if (x_lower_idx_val != x_upper_idx_val)
+			{
+				if (x_lower_idx_val < 0)
+				{
+					temp.at<float>(r, c) = (accumulated_src.at<float>(r, x_upper_idx_val) - 0)
+						/ (x_upper_idx_val - x_lower_idx_val);
+				}
+				else
+				{
+					temp.at<float>(r, c) = (accumulated_src.at<float>(r, x_upper_idx_val) - accumulated_src.at<float>(r, x_lower_idx_val))
+						/ (x_upper_idx_val - x_lower_idx_val);
+				}
+			}
+		}
+	}
+	temp.copyTo(_dst);
+}
+
+
+void InterpolatedConvolution(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _box_radius)
+{
+	// x 방향 Interpolated Convolution
+	// _src: cv::MAt_<float>
+	cv::Mat x_lower, x_upper;
+	x_lower = _ct - _box_radius;
+	x_upper = _ct + _box_radius;
+
+	cv::Mat x_lower_idx, x_upper_idx;
+	x_lower_idx = cv::Mat::zeros(_src.size(), CV_32S);
+	x_upper_idx = cv::Mat::zeros(_src.size(), CV_32S);
+
+	cv::Mat ct_row;
+	#pragma omp parallel for collapse(2)
+	for (int r = 0; r < _src.rows; r++)
+	{
+		ct_row = _ct.row(r);
+		for (int c = 0; c < _src.cols; c++)
+		{
+			x_lower_idx.at<int>(r, c) = FindLargerMin(ct_row, x_lower.at<float>(r, c), c == 0 ? 0 : x_lower_idx.at<int>(r, c - 1), c);
+			x_upper_idx.at<int>(r, c) = FindLargerMin(ct_row, x_upper.at<float>(r, c), c == 0 ? 0 : x_upper_idx.at<int>(r, c - 1), ct_row.cols - 1);
+		}
+	}
+
+	cv::Mat areas;
+	_src.copyTo(areas);
+	for (int r = 0; r < _src.rows; r++)
+	{
+		for (int c = 1; c < _src.cols; c++)
+		{
+			areas.at<float>(r, c) = (_src.at<float>(r, c) + _src.at<float>(r, c - 1)) * (_ct.at<float>(r, c) - _ct.at<float>(r, c - 1)) * 0.5f;
+		}
+	}
+
+	cv::Mat accumulated_area;
+	areas.copyTo(accumulated_area);
+	for (int r = 0; r < _src.rows; r++)
+	{
+		for (int c = 1; c < _src.cols; c++)
+		{
+			accumulated_area.at<float>(r, c) += accumulated_area.at<float>(r, c - 1);
+		}
+	}
+
+	cv::Mat L_mat = cv::Mat::zeros(_src.size(), CV_32F);
+	cv::Mat R_mat = cv::Mat::zeros(_src.size(), CV_32F);
+	cv::Mat C_mat = cv::Mat::zeros(_src.size(), CV_32F);
+
+	cv::Mat temp;
+	accumulated_area.copyTo(temp);
+	float alpha, yi, L, R, C;
+	int x_lower_idx_0, x_lower_idx_1, x_lower_idx_2;
+	int x_upper_idx_0, x_upper_idx_1, x_upper_idx_2;
+	for (int r = 0; r < _src.rows; r++)
+	{
+		for (int c = 0; c < _src.cols; c++)
+		{
+			// 0: prev, 1: center, 2: post
+			x_lower_idx_0 = x_lower_idx.at<int>(r, c) - 1;
+			x_lower_idx_1 = x_lower_idx.at<int>(r, c);
+			x_upper_idx_1 = x_upper_idx.at<int>(r, c) - 1;
+			x_upper_idx_2 = x_upper_idx.at<int>(r, c);
+				
+			C = accumulated_area.at<float>(r, x_upper_idx_1) - accumulated_area.at<float>(r, x_lower_idx_1);
+			C_mat.at<float>(r, c) = C;
+
+			L = 0;
+			R = 0;
+			if (x_lower_idx_0 >= 0)
+			{
+				alpha = (x_lower.at<float>(r, c) - _ct.at<float>(r, x_lower_idx_0)) / (_ct.at<float>(r, x_lower_idx_1) - _ct.at<float>(r, x_lower_idx_0));
+				yi = _src.at<float>(r, x_lower_idx_0) + alpha * (_src.at<float>(r, x_lower_idx_1) - _src.at<float>(r, x_lower_idx_0));
+				L = (yi + _src.at<float>(r, x_lower_idx_1)) * (1 - alpha) * (_ct.at<float>(r, x_lower_idx_1) - _ct.at<float>(r, x_lower_idx_0)) * 0.5f;
+				L_mat.at<float>(r, c) = L;
+			}
+			else
+			{
+				alpha = (x_lower.at<float>(r, c) - 0) / (_ct.at<float>(r, x_lower_idx_1) - 0);
+				yi = _src.at<float>(r, 0) + alpha * (_src.at<float>(r, x_lower_idx_1) - _src.at<float>(r, 0));
+				L = (yi + _src.at<float>(r, x_lower_idx_1)) * (1 - alpha) * (_ct.at<float>(r, x_lower_idx_1) - 0) * 0.5f;
+				L_mat.at<float>(r, c) = L;
+			}
+
+			if (x_upper_idx_2 <= _src.cols - 1)
+			{
+				alpha = (x_upper.at<float>(r, c) - _ct.at<float>(r, x_upper_idx_1)) / (_ct.at<float>(r, x_upper_idx_2) - _ct.at<float>(r, x_upper_idx_1));
+				yi = _src.at<float>(r, x_upper_idx_1) + alpha * (_src.at<float>(r, x_upper_idx_2) - _src.at<float>(r, x_upper_idx_1));
+				R = (yi + _src.at<float>(r, x_upper_idx_1)) * alpha * (_ct.at<float>(r, x_upper_idx_2) - _ct.at<float>(r, x_upper_idx_1)) * 0.5f;
+				R_mat.at<float>(r, c) = R;
+			}
+			else // 경계 조건 처리 확인 필요 (결과는 맞게 나오나 정확한 이해 추가 필요)
+			{
+				alpha = (x_upper.at<float>(r, c) - _ct.at<float>(r, x_upper_idx_1)) / (1.2 * _box_radius);	// 왜 1.2인지 확인 필요
+				yi = _src.at<float>(r, x_upper_idx_1);														// 여기 왜 Border_replicate인지 확인 필요
+				R = (yi + _src.at<float>(r, x_upper_idx_1)) * alpha * (1.2 * _box_radius) * 0.5f;
+				R_mat.at<float>(r, c) = R;
+			}
+
+			temp.at<float>(r, c) = (L + C + R) / (2 * _box_radius);
+		}
+	}
+	temp.copyTo(_dst);
+}
+
+void RecursiveFilter(cv::Mat _src, cv::Mat& _dst, cv::Mat _ct, float _sigma)
+{
+	// Recursive Filtering
+	// _src: cv::MAt_<float>
+
+	float a = exp(-sqrt(2) / _sigma);
+	float d = 0;
+
+	cv::Mat temp = cv::Mat::zeros(_src.size(), CV_32F);
+	for (int r = 0; r < _src.rows; r++)
+	{
+		temp.at<float>(r, 0) = _src.at<float>(r, 0);
+		for (int c = 1; c < _src.cols; c++)
+		{
+			d = _ct.at<float>(r, c);
+			temp.at<float>(r, c) = _src.at<float>(r, c) + pow(a, d) * (temp.at<float>(r, c - 1) - _src.at<float>(r, c));
+		}
+	}
+
+	for (int r = 0; r < _src.rows; r++)
+	{
+		for (int c = _src.cols - 2; c >= 0; c--)
+		{
+			d = _ct.at<float>(r, c + 1);
+			temp.at<float>(r, c) = temp.at<float>(r, c) + pow(a, d) * (temp.at<float>(r, c + 1) - temp.at<float>(r, c));
+		}
+	}
+
+	temp.copyTo(_dst);
+}
+
+
+bool SpatialEdgePreservingFilter_v2(cv::Mat _src, cv::Mat& _dst, int _sigma_s, double _sigma_r, int _num_iterations, DOMAIN_TRANSFORM_MODE _mode)
+{
+	// _sigma_s와 _sigma_r을 합쳐서 하나의 파라미터로 만들어도 될 것 같음. 추후 검토
+	TIMER();
+
+	if (_mode == VERSION_1)
+	{
+		return false;
+	}
+
+	if (_src.empty() || _src.channels() > 1)
+	{
+		OutputDebugString(L"Invalid Input Image.");
+		return false;
+	}
+
+	cv::Mat ct_x, ct_y;
+	int cum_flag = 1;
+
+	if (_mode == RECURSIVE_FILTER)
+	{
+		cum_flag = 0;
+	}
+
+	DomainTransform(_src, ct_x, _sigma_s, _sigma_r, cum_flag);
+	DomainTransform(_src.t(), ct_y, _sigma_s, _sigma_r, cum_flag);
+
+	cv::Mat src_float;
+	_src.convertTo(src_float, CV_32F);
+	float sigma_H = static_cast<float>(_sigma_s);
+	float sigma_H_i, box_radius;
+	for (int iter = 0; iter < _num_iterations; iter++)
+	{
+		sigma_H_i = GetSigmaH(sigma_H, _num_iterations, iter);
+		box_radius = sqrt(3) * sigma_H_i;
+
+		if (_mode == NORMALIZED_CONVOLUTION)
+		{
+			NormalizedConvolution(src_float, src_float, ct_x, box_radius);
+			NormalizedConvolution(src_float.t(), src_float, ct_y, box_radius);
+			cv::transpose(src_float, src_float);
+		}
+		else if (_mode == INTERPOLATED_CONVOLUTION)
+		{
+			InterpolatedConvolution(src_float, src_float, ct_x, box_radius);
+			InterpolatedConvolution(src_float.t(), src_float, ct_y, box_radius);
+			cv::transpose(src_float, src_float);
+		}
+		else if (_mode == RECURSIVE_FILTER)
+		{
+			RecursiveFilter(src_float, src_float, ct_x, sigma_H_i);
+			RecursiveFilter(src_float.t(), src_float, ct_y, sigma_H_i);
+			cv::transpose(src_float, src_float);
+		}
+		else
+		{
+			OutputDebugString(L"Unsupported Domain Transform Mode for Spatial Edge Preserving Filter.");
+			return false;
+		}
+	}
+
+	src_float.convertTo(_dst, _src.type());
 
 	return true;
 }
